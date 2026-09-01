@@ -38,8 +38,10 @@ export default async function ProductsPage({
     .limit(500);
 
   if (q && q.trim()) {
-    const term = q.trim();
-    query = query.or(`name.ilike.%${term}%,sku.ilike.%${term}%`);
+    const term = q.trim().replace(/[,()%\\]/g, "");
+    if (term) {
+      query = query.or(`name.ilike.%${term}%,sku.ilike.%${term}%`);
+    }
   }
 
   const { data: products, error } = await query;

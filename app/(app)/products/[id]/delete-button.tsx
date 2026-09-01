@@ -1,6 +1,7 @@
 "use client";
 
-import { useTransition } from "react";
+import { useState, useTransition } from "react";
+import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import {
   AlertDialog,
@@ -17,9 +18,10 @@ import { deleteProduct } from "./actions";
 
 export function DeleteButton({ id, name }: { id: string; name: string }) {
   const [pending, startTransition] = useTransition();
+  const [open, setOpen] = useState(false);
 
   return (
-    <AlertDialog>
+    <AlertDialog open={open} onOpenChange={setOpen}>
       <AlertDialogTrigger render={<Button type="button" variant="destructive" />}>
         Delete
       </AlertDialogTrigger>
@@ -36,7 +38,12 @@ export function DeleteButton({ id, name }: { id: string; name: string }) {
             disabled={pending}
             onClick={() =>
               startTransition(async () => {
-                await deleteProduct(id);
+                try {
+                  await deleteProduct(id);
+                } catch (err) {
+                  setOpen(false);
+                  toast.error(err instanceof Error ? err.message : "Failed to delete product");
+                }
               })
             }
           >

@@ -185,14 +185,13 @@ RLS remains the real enforcement; middleware is a UX optimization.
 ### 6.3 Server actions
 
 Write paths (`createProduct`, `updateProduct`, `deleteProduct`) are
-server actions in the relevant `actions.ts` files. Each:
-
-1. Gets the server Supabase client.
-2. Calls the DB. RLS enforces admin-only.
-3. On success, revalidates `/products` and (for update) `/products/[id]`,
-   then returns `{ ok: true }` or redirects.
-4. On failure, returns `{ ok: false, error: string }` for the form to
-   surface via toast.
+server actions. Each: (1) gets the server Supabase client; (2) calls
+the DB, with RLS enforcing admin-only; (3) on success, revalidates
+`/products` and (for update) `/products/[id]`, then redirects. On
+failure, throws — surfaced via Next.js's error boundary. Delete
+additionally shows a `sonner` toast on failure because it is
+dispatched from a client transition and does not page-navigate on
+error.
 
 ## 7. Pages and UI
 
@@ -221,7 +220,7 @@ server actions in the relevant `actions.ts` files. Each:
   Cost, Stock.
 - Client-side validation: required fields, non-negative numbers.
 - Submits `createProduct` server action.
-- On success: toast, redirect to `/products/[newId]`.
+- On success: redirect to `/products/[newId]`. Success is signaled by the redirect; failures surface through Next.js's error boundary.
 
 ### 7.4 `/products/[id]`
 
@@ -270,7 +269,7 @@ Run manually after each migration change. Documented in the README.
 - Sign in as admin.
 - Product list loads. "Add product" button visible.
 - Create a product. Redirects to detail page. Values are correct.
-- Edit the product. "Saved" toast fires. List reflects the change.
+- Edit the product. Save. List reflects the change.
 - Delete the product. Confirmation dialog appears. On confirm, list no
   longer shows the product.
 - Search by name and by SKU each return the expected row.

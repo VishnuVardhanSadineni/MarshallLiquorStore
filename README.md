@@ -6,7 +6,7 @@ enforced by Supabase Row Level Security.
 
 ## Stack
 
-- Next.js 15 (App Router) + TypeScript + Tailwind + shadcn/ui
+- Next.js 16 (App Router) + TypeScript + Tailwind + shadcn/ui
 - Supabase (Postgres, Auth, RLS)
 - `@supabase/ssr` for cookie-based auth
 
