@@ -1,0 +1,50 @@
+"use server";
+
+import { redirect } from "next/navigation";
+import { revalidatePath } from "next/cache";
+import { createClient } from "@/lib/supabase/server";
+import { requireAdmin } from "@/lib/auth";
+
+function parseNumber(value: FormDataEntryValue | null): number | null {
+  if (value === null || value === "") return null;
+  const n = Number(value);
+  return Number.isFinite(n) ? n : null;
+}
+
+export async function updateProduct(id: string, formData: FormData) {
+  await requireAdmin();
+
+  const sku = String(formData.get("sku") ?? "").trim();
+  const name = String(formData.get("name") ?? "").trim();
+  const description = String(formData.get("description") ?? "").trim() || null;
+  const category = String(formData.get("category") ?? "").trim() || null;
+  const price = parseNumber(formData.get("price"));
+  const cost = parseNumber(formData.get("cost"));
+  const stock = parseNumber(formData.get("stock")) ?? 0;
+
+  if (!sku || !name || price === null || price < 0 || stock < 0) {
+    throw new Error("Missing or invalid fields");
+  }
+
+  const supabase = await createClient();
+  const { error } = await supabase
+    .from("products")
+    .update({ sku, name, description, category, price, cost, stock })
+    .eq("id", id);
+
+  if (error) throw new Error(error.message);
+
+  revalidatePath("/products");
+  revalidatePath(`/products/${id}`);
+  redirect(`/products/${id}`);
+}
+
+export async function deleteProduct(id: string) {
+  await requireAdmin();
+  const supabase = await createClient();
+  const { error } = await supabase.from("products").delete().eq("id", id);
+  if (error) throw new Error(error.message);
+
+  revalidatePath("/products");
+  redirect("/products");
+}
