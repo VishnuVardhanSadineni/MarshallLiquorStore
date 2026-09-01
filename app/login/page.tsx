@@ -6,7 +6,6 @@ import { createClient } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -36,19 +35,30 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4 bg-muted/40">
-      <Card className="w-full max-w-sm">
-        <CardHeader>
-          <CardTitle>Sign in</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <form onSubmit={handleSubmit} className="space-y-4">
+    <div className="min-h-screen flex items-center justify-center p-4">
+      <div className="w-full max-w-sm">
+        <div className="mb-8 text-center">
+          <div className="inline-flex items-center gap-2 text-primary">
+            <span className="inline-block h-2 w-2 rounded-full bg-primary" aria-hidden />
+            <span className="text-xs uppercase tracking-[0.24em] font-medium">Inventory</span>
+          </div>
+          <h1 className="mt-3 font-heading text-4xl leading-tight text-foreground">
+            Welcome back
+          </h1>
+          <p className="mt-2 text-sm text-muted-foreground">
+            Sign in to manage your store&apos;s catalog.
+          </p>
+        </div>
+
+        <div className="rounded-2xl border border-border bg-card p-6 shadow-[0_20px_60px_-30px_oklch(0.35_0.08_40_/_0.3)]">
+          <form onSubmit={handleSubmit} className="space-y-5">
             <div className="space-y-2">
               <Label htmlFor="email">Email</Label>
               <Input
                 id="email"
                 type="email"
                 autoComplete="email"
+                placeholder="you@yourstore.com"
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
@@ -60,20 +70,27 @@ export default function LoginPage() {
                 id="password"
                 type="password"
                 autoComplete="current-password"
+                placeholder="Your password"
                 required
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
               />
             </div>
             {error && (
-              <p className="text-sm text-destructive">{error}</p>
+              <div className="rounded-md border border-destructive/30 bg-destructive/10 px-3 py-2 text-sm text-destructive">
+                {error}
+              </div>
             )}
             <Button type="submit" className="w-full" disabled={loading}>
               {loading ? "Signing in..." : "Sign in"}
             </Button>
           </form>
-        </CardContent>
-      </Card>
+        </div>
+
+        <p className="mt-6 text-center text-xs text-muted-foreground">
+          New team member? Ask your admin to add you.
+        </p>
+      </div>
     </div>
   );
 }

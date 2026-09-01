@@ -10,54 +10,83 @@ export default async function NewProductPage() {
   await requireAdmin();
 
   return (
-    <div className="max-w-2xl space-y-6">
-      <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-semibold">Add product</h1>
-        <Link href="/products" className={buttonVariants({ variant: "ghost" })}>
-          Cancel
+    <div className="mx-auto max-w-3xl space-y-8">
+      <div className="space-y-3">
+        <Link
+          href="/products"
+          className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground transition-colors"
+        >
+          <span aria-hidden>←</span> Back to products
         </Link>
+        <div className="flex flex-wrap items-end justify-between gap-4">
+          <div className="space-y-2">
+            <span className="text-xs uppercase tracking-[0.24em] text-primary font-medium">
+              New item
+            </span>
+            <h1 className="font-heading text-4xl leading-none text-foreground">
+              Add a product
+            </h1>
+            <p className="text-sm text-muted-foreground">
+              Fill in the details below. You can always edit them later.
+            </p>
+          </div>
+        </div>
       </div>
 
-      <form action={createProduct} className="space-y-4">
-        <div className="grid grid-cols-2 gap-4">
-          <div className="space-y-2">
-            <Label htmlFor="sku">SKU</Label>
-            <Input id="sku" name="sku" required />
+      <form action={createProduct} className="space-y-6">
+        <FormSection
+          title="Basics"
+          description="The identifying details customers and staff will recognize."
+        >
+          <div className="grid gap-5 sm:grid-cols-2">
+            <Field label="SKU" htmlFor="sku" required>
+              <Input
+                id="sku"
+                name="sku"
+                placeholder="SKU-001"
+                required
+              />
+            </Field>
+            <Field label="Category" htmlFor="category">
+              <Input
+                id="category"
+                name="category"
+                placeholder="e.g. Apparel, Grocery, Hardware"
+              />
+            </Field>
           </div>
-          <div className="space-y-2">
-            <Label htmlFor="category">Category</Label>
-            <Input id="category" name="category" />
-          </div>
-        </div>
-
-        <div className="space-y-2">
-          <Label htmlFor="name">Name</Label>
-          <Input id="name" name="name" required />
-        </div>
-
-        <div className="space-y-2">
-          <Label htmlFor="description">Description</Label>
-          <Textarea id="description" name="description" rows={3} />
-        </div>
-
-        <div className="grid grid-cols-3 gap-4">
-          <div className="space-y-2">
-            <Label htmlFor="price">Price</Label>
-            <Input
-              id="price"
-              name="price"
-              type="number"
-              step="0.01"
-              min="0"
-              required
+          <Field label="Name" htmlFor="name" required>
+            <Input id="name" name="name" placeholder="Product name" required />
+          </Field>
+          <Field label="Description" htmlFor="description">
+            <Textarea
+              id="description"
+              name="description"
+              rows={3}
+              placeholder="A short description your team will see when browsing."
             />
+          </Field>
+        </FormSection>
+
+        <FormSection
+          title="Pricing"
+          description="What you charge and, optionally, what it costs you."
+        >
+          <div className="grid gap-5 sm:grid-cols-2">
+            <Field label="Sale price" htmlFor="price" required>
+              <MoneyInput id="price" name="price" required />
+            </Field>
+            <Field label="Purchase cost" htmlFor="cost">
+              <MoneyInput id="cost" name="cost" />
+            </Field>
           </div>
-          <div className="space-y-2">
-            <Label htmlFor="cost">Cost</Label>
-            <Input id="cost" name="cost" type="number" step="0.01" min="0" />
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="stock">Stock</Label>
+        </FormSection>
+
+        <FormSection
+          title="Stock"
+          description="How many units are on hand right now."
+        >
+          <Field label="Quantity" htmlFor="stock" required>
             <Input
               id="stock"
               name="stock"
@@ -65,15 +94,88 @@ export default async function NewProductPage() {
               step="1"
               min="0"
               defaultValue={0}
+              className="max-w-[180px]"
               required
             />
-          </div>
-        </div>
+          </Field>
+        </FormSection>
 
-        <div className="flex gap-2">
-          <Button type="submit">Create product</Button>
+        <div className="flex flex-wrap items-center justify-end gap-3 border-t border-border/60 pt-6">
+          <Link
+            href="/products"
+            className={buttonVariants({ variant: "ghost" })}
+          >
+            Cancel
+          </Link>
+          <Button type="submit" size="lg">
+            Create product
+          </Button>
         </div>
       </form>
+    </div>
+  );
+}
+
+function FormSection({
+  title,
+  description,
+  children,
+}: {
+  title: string;
+  description: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <section className="rounded-2xl border border-border/70 bg-card p-6 shadow-sm sm:p-8">
+      <div className="mb-6 flex flex-col gap-1">
+        <h2 className="font-heading text-xl text-foreground">{title}</h2>
+        <p className="text-sm text-muted-foreground">{description}</p>
+      </div>
+      <div className="space-y-5">{children}</div>
+    </section>
+  );
+}
+
+function Field({
+  label,
+  htmlFor,
+  required,
+  children,
+}: {
+  label: string;
+  htmlFor: string;
+  required?: boolean;
+  children: React.ReactNode;
+}) {
+  return (
+    <div className="space-y-2">
+      <Label htmlFor={htmlFor} className="flex items-center gap-1">
+        {label}
+        {required && (
+          <span className="text-primary text-xs" aria-hidden>
+            •
+          </span>
+        )}
+      </Label>
+      {children}
+    </div>
+  );
+}
+
+function MoneyInput(props: React.ComponentProps<typeof Input>) {
+  return (
+    <div className="relative">
+      <span className="pointer-events-none absolute inset-y-0 left-3 flex items-center text-sm text-muted-foreground">
+        $
+      </span>
+      <Input
+        type="number"
+        step="0.01"
+        min="0"
+        placeholder="0.00"
+        {...props}
+        className={"pl-7 " + (props.className ?? "")}
+      />
     </div>
   );
 }
