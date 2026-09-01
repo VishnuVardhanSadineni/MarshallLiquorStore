@@ -23,7 +23,7 @@ export default async function NewProductPage() {
             <span className="text-xs uppercase tracking-[0.24em] text-primary font-medium">
               New item
             </span>
-            <h1 className="font-heading text-4xl leading-none text-foreground">
+            <h1 className="font-heading text-3xl sm:text-4xl leading-none text-foreground">
               Add a product
             </h1>
             <p className="text-sm text-muted-foreground">
@@ -100,14 +100,17 @@ export default async function NewProductPage() {
           </Field>
         </FormSection>
 
-        <div className="flex flex-wrap items-center justify-end gap-3 border-t border-border/60 pt-6">
+        <div className="flex flex-col-reverse gap-3 border-t border-border/60 pt-6 sm:flex-row sm:items-center sm:justify-end">
           <Link
             href="/products"
-            className={buttonVariants({ variant: "ghost" })}
+            className={
+              buttonVariants({ variant: "ghost" }) +
+              " w-full justify-center sm:w-auto"
+            }
           >
             Cancel
           </Link>
-          <Button type="submit" size="lg">
+          <Button type="submit" size="lg" className="w-full sm:w-auto">
             Create product
           </Button>
         </div>
@@ -126,7 +129,7 @@ function FormSection({
   children: React.ReactNode;
 }) {
   return (
-    <section className="rounded-2xl border border-border/70 bg-card p-6 shadow-sm sm:p-8">
+    <section className="rounded-2xl border border-border/70 bg-card p-5 shadow-sm sm:p-8">
       <div className="mb-6 flex flex-col gap-1">
         <h2 className="font-heading text-xl text-foreground">{title}</h2>
         <p className="text-sm text-muted-foreground">{description}</p>

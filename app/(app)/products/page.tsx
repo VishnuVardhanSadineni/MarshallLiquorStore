@@ -64,10 +64,10 @@ export default async function ProductsPage({
           <span className="text-xs uppercase tracking-[0.24em] text-primary font-medium">
             Catalog
           </span>
-          <h1 className="font-heading text-4xl sm:text-5xl leading-none text-foreground">
+          <h1 className="font-heading text-3xl sm:text-5xl leading-none text-foreground">
             Products
           </h1>
-          <p className="text-muted-foreground max-w-md">
+          <p className="text-sm sm:text-base text-muted-foreground max-w-md">
             {isAdmin
               ? "Add, edit, and keep your store's inventory up to date."
               : "Browse your store's current inventory."}
@@ -76,7 +76,10 @@ export default async function ProductsPage({
         {isAdmin && (
           <Link
             href="/products/new"
-            className={buttonVariants({ size: "lg" }) + " shadow-sm"}
+            className={
+              buttonVariants({ size: "lg" }) +
+              " w-full sm:w-auto justify-center shadow-sm"
+            }
           >
             <span className="mr-1.5 text-lg leading-none">+</span> Add product
           </Link>
@@ -110,7 +113,47 @@ export default async function ProductsPage({
       {rows.length === 0 ? (
         <EmptyState isAdmin={isAdmin} hasSearch={hasSearch} query={q} />
       ) : (
-        <div className="overflow-hidden rounded-2xl border border-border/70 bg-card shadow-sm">
+        <>
+          <ul className="space-y-3 sm:hidden">
+            {rows.map((p) => (
+              <li key={p.id}>
+                <Link
+                  href={`/products/${p.id}`}
+                  className="block rounded-2xl border border-border/70 bg-card p-4 shadow-sm transition-colors active:bg-accent/60"
+                >
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="min-w-0 flex-1">
+                      <p className="truncate font-medium text-foreground">
+                        {p.name}
+                      </p>
+                      <p className="mt-0.5 truncate text-xs text-muted-foreground">
+                        <span className="font-mono">{p.sku}</span>
+                        {p.category && (
+                          <>
+                            <span className="mx-1.5 opacity-50">·</span>
+                            {p.category}
+                          </>
+                        )}
+                      </p>
+                    </div>
+                    <div className="text-right shrink-0">
+                      <p className="font-medium tabular-nums text-foreground">
+                        ${Number(p.price).toFixed(2)}
+                      </p>
+                    </div>
+                  </div>
+                  <div className="mt-3 flex items-center justify-between">
+                    <StockPill value={p.stock} />
+                    <span className="text-sm text-primary">
+                      {isAdmin ? "Edit" : "View"} →
+                    </span>
+                  </div>
+                </Link>
+              </li>
+            ))}
+          </ul>
+
+        <div className="hidden sm:block overflow-hidden rounded-2xl border border-border/70 bg-card shadow-sm">
           <Table>
             <TableHeader>
               <TableRow className="border-border/50 hover:bg-transparent">
@@ -167,6 +210,7 @@ export default async function ProductsPage({
             </TableBody>
           </Table>
         </div>
+        </>
       )}
     </div>
   );

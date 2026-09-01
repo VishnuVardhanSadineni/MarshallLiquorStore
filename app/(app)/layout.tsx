@@ -17,14 +17,14 @@ export default async function AppLayout({
   return (
     <div className="min-h-screen flex flex-col">
       <header className="border-b border-border/70 bg-background/70 backdrop-blur supports-[backdrop-filter]:bg-background/50">
-        <div className="mx-auto max-w-6xl px-6 h-16 flex items-center justify-between">
-          <div className="flex items-center gap-8">
+        <div className="mx-auto max-w-6xl px-4 sm:px-6 h-14 sm:h-16 flex items-center justify-between">
+          <div className="flex items-center gap-4 sm:gap-8">
             <Link href="/products" className="flex items-center gap-2 group">
               <span
                 className="inline-block h-2.5 w-2.5 rounded-full bg-primary transition-transform group-hover:scale-125"
                 aria-hidden
               />
-              <span className="font-heading text-xl leading-none text-foreground">
+              <span className="font-heading text-lg sm:text-xl leading-none text-foreground">
                 Inventory
               </span>
             </Link>
@@ -64,7 +64,9 @@ export default async function AppLayout({
         </div>
       </header>
       <main className="flex-1">
-        <div className="mx-auto max-w-6xl px-6 py-10">{children}</div>
+        <div className="mx-auto max-w-6xl px-4 sm:px-6 py-6 sm:py-10">
+          {children}
+        </div>
       </main>
       <Toaster richColors position="top-right" />
     </div>
