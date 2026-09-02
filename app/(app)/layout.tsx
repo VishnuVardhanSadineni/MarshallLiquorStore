@@ -28,19 +28,27 @@ export default async function AppLayout({
                 Inventory
               </span>
             </Link>
-            <nav className="hidden sm:flex items-center gap-1 text-sm">
+            <nav className="flex items-center gap-0.5 sm:gap-1 text-sm">
               <Link
                 href="/products"
-                className="px-3 py-1.5 rounded-md text-foreground/80 hover:text-foreground hover:bg-accent transition-colors"
+                className="px-2 sm:px-3 py-1.5 rounded-md text-foreground/80 hover:text-foreground hover:bg-accent transition-colors"
               >
                 Products
               </Link>
+              {isAdmin && (
+                <Link
+                  href="/team"
+                  className="px-2 sm:px-3 py-1.5 rounded-md text-foreground/80 hover:text-foreground hover:bg-accent transition-colors"
+                >
+                  Team
+                </Link>
+              )}
             </nav>
           </div>
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2 sm:gap-3">
             <span
               className={
-                "inline-flex items-center gap-1.5 rounded-full border px-2.5 py-0.5 text-xs font-medium " +
+                "hidden sm:inline-flex items-center gap-1.5 rounded-full border px-2.5 py-0.5 text-xs font-medium " +
                 (isAdmin
                   ? "border-primary/30 bg-primary/10 text-primary"
                   : "border-border bg-muted text-muted-foreground")

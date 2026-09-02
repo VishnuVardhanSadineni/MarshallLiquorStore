@@ -1,8 +1,8 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { updateSession } from "@/lib/supabase/middleware";
 
-const AUTH_ROUTES = ["/products"];
-const ADMIN_ONLY_PREFIXES = ["/products/new"];
+const AUTH_ROUTES = ["/products", "/team"];
+const ADMIN_ONLY_PREFIXES = ["/products/new", "/team"];
 
 export async function middleware(request: NextRequest) {
   const { response, supabase, user } = await updateSession(request);
