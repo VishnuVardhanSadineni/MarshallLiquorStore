@@ -54,7 +54,15 @@ export default async function EditCategoryPage({
             {name}
           </h1>
           <p className="text-sm text-muted-foreground">
-            {bottleCount} bottle{bottleCount === 1 ? "" : "s"} in this category.
+            {bottleCount} bottle{bottleCount === 1 ? "" : "s"} in this category.{" "}
+            {bottleCount > 0 && (
+              <Link
+                href={`/products?category=${id}`}
+                className="text-primary hover:underline"
+              >
+                View them →
+              </Link>
+            )}
           </p>
         </div>
       </div>

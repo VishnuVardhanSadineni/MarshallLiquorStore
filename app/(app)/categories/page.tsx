@@ -128,8 +128,17 @@ export default async function CategoriesPage() {
                       <Thumb url={r.image_url} />
                     </TableCell>
                     <TableCell className="font-medium">{r.name}</TableCell>
-                    <TableCell className="text-right tabular-nums text-muted-foreground">
-                      {r.bottle_count}
+                    <TableCell className="text-right tabular-nums">
+                      {r.bottle_count === 0 ? (
+                        <span className="text-muted-foreground">0</span>
+                      ) : (
+                        <Link
+                          href={`/products?category=${r.id}`}
+                          className="text-muted-foreground hover:text-primary underline-offset-4 hover:underline"
+                        >
+                          {r.bottle_count}
+                        </Link>
+                      )}
                     </TableCell>
                     <TableCell className="text-right">
                       <Link

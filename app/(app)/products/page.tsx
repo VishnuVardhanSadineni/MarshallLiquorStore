@@ -27,9 +27,9 @@ type Product = {
 export default async function ProductsPage({
   searchParams,
 }: {
-  searchParams: Promise<{ q?: string }>;
+  searchParams: Promise<{ q?: string; category?: string }>;
 }) {
-  const { q } = await searchParams;
+  const { q, category } = await searchParams;
   const supabase = await createClient();
   const profile = await getProfile();
   const isAdmin = profile?.role === "admin";
@@ -49,7 +49,23 @@ export default async function ProductsPage({
     }
   }
 
+  if (category === "uncategorized") {
+    query = query.is("category_id", null);
+  } else if (category && category.trim()) {
+    query = query.eq("category_id", category);
+  }
+
   const { data: products, error } = await query;
+
+  const { data: categoriesData } = await supabase
+    .from("categories")
+    .select("id, name")
+    .order("name", { ascending: true });
+  const categories = (categoriesData ?? []) as { id: string; name: string }[];
+  const selectedCategoryName =
+    category === "uncategorized"
+      ? "Uncategorized"
+      : categories.find((c) => c.id === category)?.name ?? null;
 
   if (error) {
     return (
@@ -61,6 +77,8 @@ export default async function ProductsPage({
 
   const rows = (products ?? []) as unknown as Product[];
   const hasSearch = Boolean(q && q.trim());
+  const hasCategoryFilter = Boolean(category && category.trim());
+  const hasAnyFilter = hasSearch || hasCategoryFilter;
 
   return (
     <div className="space-y-8">
@@ -92,7 +110,7 @@ export default async function ProductsPage({
       </div>
 
       <form
-        className="flex gap-2 rounded-xl border border-border/70 bg-card/60 p-2 backdrop-blur"
+        className="flex flex-col gap-2 rounded-xl border border-border/70 bg-card/60 p-2 backdrop-blur sm:flex-row sm:items-center"
         action="/products"
         method="get"
       >
@@ -102,10 +120,23 @@ export default async function ProductsPage({
           defaultValue={q ?? ""}
           className="border-0 bg-transparent shadow-none focus-visible:ring-0 focus-visible:border-0"
         />
+        <select
+          name="category"
+          defaultValue={category ?? ""}
+          className="h-9 rounded-lg border border-border/60 bg-background px-3 text-sm focus:outline-none focus:ring-3 focus:ring-ring/40 sm:max-w-[220px]"
+        >
+          <option value="">All categories</option>
+          <option value="uncategorized">Uncategorized</option>
+          {categories.map((c) => (
+            <option key={c.id} value={c.id}>
+              {c.name}
+            </option>
+          ))}
+        </select>
         <Button type="submit" variant="secondary">
-          Search
+          Apply
         </Button>
-        {hasSearch && (
+        {hasAnyFilter && (
           <Link
             href="/products"
             className={buttonVariants({ variant: "ghost" })}
@@ -115,8 +146,27 @@ export default async function ProductsPage({
         )}
       </form>
 
+      {hasCategoryFilter && selectedCategoryName && (
+        <div className="flex items-center gap-2 text-sm">
+          <span className="text-muted-foreground">Aisle:</span>
+          <span className="inline-flex items-center gap-1.5 rounded-full border border-primary/30 bg-primary/10 px-2.5 py-0.5 text-xs font-medium text-primary">
+            <span className="inline-block h-1.5 w-1.5 rounded-full bg-primary" />
+            {selectedCategoryName}
+          </span>
+          <span className="text-muted-foreground">
+            · {rows.length} {rows.length === 1 ? "bottle" : "bottles"}
+          </span>
+        </div>
+      )}
+
       {rows.length === 0 ? (
-        <EmptyState isAdmin={isAdmin} hasSearch={hasSearch} query={q} />
+        <EmptyState
+          isAdmin={isAdmin}
+          hasSearch={hasSearch}
+          hasCategoryFilter={hasCategoryFilter}
+          categoryName={selectedCategoryName}
+          query={q}
+        />
       ) : (
         <>
           <ul className="space-y-3 sm:hidden">
@@ -342,10 +392,14 @@ function StockPill({ value }: { value: number }) {
 function EmptyState({
   isAdmin,
   hasSearch,
+  hasCategoryFilter,
+  categoryName,
   query,
 }: {
   isAdmin: boolean;
   hasSearch: boolean;
+  hasCategoryFilter: boolean;
+  categoryName: string | null;
   query?: string;
 }) {
   return (
@@ -374,6 +428,8 @@ function EmptyState({
       <h2 className="relative mt-6 font-heading text-2xl text-foreground">
         {hasSearch
           ? "Nothing matched your search"
+          : hasCategoryFilter
+          ? `No bottles in ${categoryName}`
           : isAdmin
           ? "Your shelves are empty"
           : "The catalog is empty"}
@@ -381,11 +437,13 @@ function EmptyState({
       <p className="relative mt-2 text-sm text-muted-foreground">
         {hasSearch
           ? `We couldn't find anything for "${query}". Try a different name or SKU.`
+          : hasCategoryFilter
+          ? "Clear the filter to see everything, or add a bottle to this aisle."
           : isAdmin
           ? "Add your first bottle to start tracking your inventory."
           : "Check back once your admin stocks the shelves."}
       </p>
-      {isAdmin && !hasSearch && (
+      {isAdmin && !hasSearch && !hasCategoryFilter && (
         <Link
           href="/products/new"
           className={
