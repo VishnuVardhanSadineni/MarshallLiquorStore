@@ -6,9 +6,12 @@ import { createClient } from "@supabase/supabase-js";
 export function createAdminClient() {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
-  if (!url || !key) {
+  if (!url) {
+    throw new Error("NEXT_PUBLIC_SUPABASE_URL is not set. Check .env.local.");
+  }
+  if (!key || key === "PLACEHOLDER-REPLACE-ME" || key === "YOUR-SERVICE-ROLE-KEY") {
     throw new Error(
-      "Supabase admin client requires NEXT_PUBLIC_SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY",
+      "SUPABASE_SERVICE_ROLE_KEY is not set. Grab it from Supabase → Settings → API (service_role secret), paste it into .env.local, and restart the dev server.",
     );
   }
   return createClient(url, key, {
