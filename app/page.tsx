@@ -109,9 +109,6 @@ function TopHeader() {
         <nav className="hidden md:flex items-center gap-1 text-sm">
           <HeaderLink href="#featured">Specials</HeaderLink>
           <HeaderLink href="/shop">Shop</HeaderLink>
-          <HeaderLink href={MAPS_URL} external>
-            Visit
-          </HeaderLink>
         </nav>
         <div className="flex items-center gap-2">
           <a
