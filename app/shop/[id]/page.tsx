@@ -7,6 +7,8 @@ import {
   MarketingFooter,
 } from "@/lib/marketing";
 import { buttonVariants } from "@/components/ui/button";
+import { AddToCartButton } from "@/app/_cart/add-to-cart-button";
+import { CartHeaderLink } from "@/app/_cart/cart-header-link";
 
 type Category = {
   id: string;
@@ -18,6 +20,7 @@ type Category = {
 type Product = {
   id: string;
   name: string;
+  sku: string;
   price: number;
   image_url: string | null;
 };
@@ -90,7 +93,7 @@ async function getCategoryWithProducts(
         .single(),
       admin
         .from("products")
-        .select("id, name, price, image_url")
+        .select("id, name, sku, price, image_url")
         .eq("category_id", id)
         .eq("is_active", true)
         .order("created_at", { ascending: false })
@@ -101,6 +104,7 @@ async function getCategoryWithProducts(
     const rawProducts = (prods ?? []) as {
       id: string;
       name: string;
+      sku: string;
       price: string | number;
       image_url: string | null;
     }[];
@@ -164,7 +168,7 @@ function ProductCard({
   categoryName: string;
 }) {
   return (
-    <div className="group rounded-2xl border border-border/70 bg-card shadow-sm overflow-hidden transition-transform hover:-translate-y-0.5">
+    <div className="group flex flex-col rounded-2xl border border-border/70 bg-card shadow-sm overflow-hidden transition-transform hover:-translate-y-0.5">
       <div className="relative aspect-[4/5] overflow-hidden bg-muted">
         {product.image_url ? (
           // eslint-disable-next-line @next/next/no-img-element
@@ -189,16 +193,29 @@ function ProductCard({
           </div>
         )}
       </div>
-      <div className="p-4 space-y-1">
+      <div className="p-4 space-y-2 flex-1 flex flex-col">
         <p className="text-[10px] uppercase tracking-[0.24em] text-muted-foreground">
           {categoryName}
         </p>
         <p className="font-medium text-foreground line-clamp-2">
           {product.name}
         </p>
-        <p className="font-heading text-lg text-primary mt-1 tabular-nums">
+        <p className="font-heading text-lg text-primary tabular-nums">
           ${product.price.toFixed(2)}
         </p>
+        <div className="mt-auto pt-2">
+          <AddToCartButton
+            product={{
+              productId: product.id,
+              name: product.name,
+              sku: product.sku,
+              priceCents: Math.round(product.price * 100),
+              imageUrl: product.image_url,
+              categoryName,
+            }}
+            size="sm"
+          />
+        </div>
       </div>
     </div>
   );
@@ -224,17 +241,18 @@ function ShopHeader() {
           </Link>
         </nav>
         <div className="flex items-center gap-2">
+          <CartHeaderLink />
           <a
             href={MAPS_URL}
             target="_blank"
             rel="noopener noreferrer"
-            className={buttonVariants({ size: "sm" }) + " hidden sm:inline-flex"}
+            className={buttonVariants({ size: "sm" }) + " hidden md:inline-flex"}
           >
             Visit us
           </a>
           <Link
             href="/login"
-            className="text-xs text-muted-foreground hover:text-foreground transition-colors"
+            className="hidden sm:inline text-xs text-muted-foreground hover:text-foreground transition-colors"
           >
             Staff
           </Link>

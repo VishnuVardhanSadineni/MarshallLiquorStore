@@ -1,7 +1,13 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { updateSession } from "@/lib/supabase/middleware";
 
-const AUTH_ROUTES = ["/dashboard", "/products", "/team", "/categories"];
+const AUTH_ROUTES = [
+  "/dashboard",
+  "/products",
+  "/team",
+  "/categories",
+  "/orders",
+];
 const ADMIN_ONLY_PREFIXES = ["/products/new", "/team", "/categories"];
 
 export async function middleware(request: NextRequest) {

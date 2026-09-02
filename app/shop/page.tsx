@@ -6,6 +6,7 @@ import {
   MarketingFooter,
 } from "@/lib/marketing";
 import { buttonVariants } from "@/components/ui/button";
+import { CartHeaderLink } from "@/app/_cart/cart-header-link";
 
 type CategoryTile = {
   id: string;
@@ -123,17 +124,18 @@ function ShopHeader() {
           </Link>
         </nav>
         <div className="flex items-center gap-2">
+          <CartHeaderLink />
           <a
             href={MAPS_URL}
             target="_blank"
             rel="noopener noreferrer"
-            className={buttonVariants({ size: "sm" }) + " hidden sm:inline-flex"}
+            className={buttonVariants({ size: "sm" }) + " hidden md:inline-flex"}
           >
             Visit us
           </a>
           <Link
             href="/login"
-            className="text-xs text-muted-foreground hover:text-foreground transition-colors"
+            className="hidden sm:inline text-xs text-muted-foreground hover:text-foreground transition-colors"
           >
             Staff
           </Link>

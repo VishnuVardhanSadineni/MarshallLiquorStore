@@ -15,17 +15,22 @@ export function HeaderNav({ isAdmin }: { isAdmin: boolean }) {
       matcher: (p) => p === "/dashboard" || p.startsWith("/dashboard/"),
     },
     {
+      href: "/orders",
+      label: "Orders",
+      matcher: (p) => p === "/orders" || p.startsWith("/orders/"),
+    },
+    {
       href: "/products",
       label: "Products",
       matcher: (p) => p === "/products" || p.startsWith("/products/"),
     },
-  ];
-  if (isAdmin) {
-    items.push({
+    {
       href: "/categories",
       label: "Categories",
       matcher: (p) => p === "/categories" || p.startsWith("/categories/"),
-    });
+    },
+  ];
+  if (isAdmin) {
     items.push({
       href: "/team",
       label: "Team",
