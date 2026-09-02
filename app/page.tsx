@@ -12,7 +12,7 @@ type FeaturedProduct = {
 
 export const revalidate = 60; // refresh featured bottles every minute
 
-const MAPS_URL = "https://share.google/eJHZg4FMsmg9s0nym";
+const MAPS_URL = "https://maps.app.goo.gl/uXotNg5kVUvXVT4t5";
 
 export default async function LandingPage() {
   const featured = await getFeaturedBottles();
