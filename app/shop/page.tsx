@@ -46,16 +46,27 @@ export default async function ShopPage() {
       <ShopHeader />
 
       <main className="mx-auto max-w-6xl px-4 sm:px-6 py-12 sm:py-20">
-        <div className="mb-10 sm:mb-14 space-y-3 max-w-2xl">
-          <span className="text-xs uppercase tracking-[0.24em] text-primary font-medium">
-            Shop
-          </span>
-          <h1 className="font-heading text-4xl sm:text-6xl leading-[1.02] tracking-tight text-foreground">
-            Browse the aisles.
-          </h1>
-          <p className="text-lg text-muted-foreground">
-            Pick a category to see what&apos;s on the shelf right now.
-          </p>
+        <div className="mb-10 sm:mb-14 flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
+          <div className="space-y-3 max-w-2xl">
+            <span className="text-xs uppercase tracking-[0.24em] text-primary font-medium">
+              Shop
+            </span>
+            <h1 className="font-heading text-4xl sm:text-6xl leading-[1.02] tracking-tight text-foreground">
+              Browse the aisles.
+            </h1>
+            <p className="text-lg text-muted-foreground">
+              Pick a category, or see everything at once.
+            </p>
+          </div>
+          <Link
+            href="/shop/all"
+            className={
+              buttonVariants({ size: "lg" }) +
+              " w-full sm:w-auto justify-center shadow-sm"
+            }
+          >
+            See all bottles →
+          </Link>
         </div>
 
         {categories.length === 0 ? (
