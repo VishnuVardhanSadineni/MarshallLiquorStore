@@ -4,8 +4,10 @@ import { requireAdmin } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
 import { updateCategory } from "./actions";
 import { DeleteCategoryButton } from "./delete-button";
+import { PhotoPicker } from "../../photo-picker";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 
 export default async function EditCategoryPage({
@@ -19,13 +21,15 @@ export default async function EditCategoryPage({
 
   const { data, error } = await supabase
     .from("categories")
-    .select("id, name, products(count)")
+    .select("id, name, description, image_url, products(count)")
     .eq("id", id)
     .single();
 
   if (error || !data) notFound();
 
   const name = data.name as string;
+  const description = (data.description as string | null) ?? "";
+  const imageUrl = (data.image_url as string | null) ?? null;
   const bottleCount =
     Array.isArray(data.products) && data.products[0]?.count
       ? Number(data.products[0].count)
@@ -34,7 +38,7 @@ export default async function EditCategoryPage({
   const boundUpdate = updateCategory.bind(null, id);
 
   return (
-    <div className="mx-auto max-w-xl space-y-8">
+    <div className="mx-auto max-w-2xl space-y-8">
       <div className="space-y-3">
         <Link
           href="/categories"
@@ -55,8 +59,22 @@ export default async function EditCategoryPage({
         </div>
       </div>
 
-      <form action={boundUpdate} className="space-y-6">
-        <section className="rounded-2xl border border-border/70 bg-card p-5 shadow-sm sm:p-8 space-y-5">
+      <form
+        action={boundUpdate}
+        className="space-y-6"
+        encType="multipart/form-data"
+      >
+        <FormSection
+          title="Photo"
+          description="Shows on the storefront tile."
+        >
+          <PhotoPicker currentUrl={imageUrl} />
+        </FormSection>
+
+        <FormSection
+          title="Details"
+          description="Name is required. Description shows as a caption on the storefront."
+        >
           <div className="space-y-2">
             <Label htmlFor="name" className="flex items-center gap-1">
               Name
@@ -72,7 +90,18 @@ export default async function EditCategoryPage({
               required
             />
           </div>
-        </section>
+          <div className="space-y-2">
+            <Label htmlFor="description">Description</Label>
+            <Textarea
+              id="description"
+              name="description"
+              rows={3}
+              maxLength={200}
+              defaultValue={description}
+              placeholder="A one-liner customers will see under this tile on the home page."
+            />
+          </div>
+        </FormSection>
 
         <div className="flex flex-col gap-3 border-t border-border/60 pt-6 sm:flex-row sm:flex-wrap sm:items-center sm:justify-between">
           <DeleteCategoryButton
@@ -97,5 +126,25 @@ export default async function EditCategoryPage({
         </div>
       </form>
     </div>
+  );
+}
+
+function FormSection({
+  title,
+  description,
+  children,
+}: {
+  title: string;
+  description: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <section className="rounded-2xl border border-border/70 bg-card p-5 shadow-sm sm:p-8">
+      <div className="mb-6 flex flex-col gap-1">
+        <h2 className="font-heading text-xl text-foreground">{title}</h2>
+        <p className="text-sm text-muted-foreground">{description}</p>
+      </div>
+      <div className="space-y-5">{children}</div>
+    </section>
   );
 }

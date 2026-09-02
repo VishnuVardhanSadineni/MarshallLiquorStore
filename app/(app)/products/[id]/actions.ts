@@ -4,10 +4,9 @@ import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
 import { requireAdmin } from "@/lib/auth";
-import {
-  deleteProductPhoto,
-  uploadProductPhoto,
-} from "../photo-storage";
+import { deleteImage, uploadImage } from "@/lib/supabase/storage";
+
+const PRODUCT_BUCKET = "product-images";
 
 function parseNumber(value: FormDataEntryValue | null): number | null {
   if (value === null || value === "") return null;
@@ -51,7 +50,7 @@ export async function updateProduct(id: string, formData: FormData) {
   let previousUrlToDelete: string | null = null;
 
   if (photo instanceof File && photo.size > 0) {
-    nextImageUrl = await uploadProductPhoto(supabase, photo);
+    nextImageUrl = await uploadImage(supabase, PRODUCT_BUCKET, photo);
     previousUrlToDelete = existingUrl;
   } else if (removePhoto) {
     nextImageUrl = null;
@@ -75,7 +74,7 @@ export async function updateProduct(id: string, formData: FormData) {
   if (error) throw new Error(error.message);
 
   if (previousUrlToDelete) {
-    await deleteProductPhoto(supabase, previousUrlToDelete);
+    await deleteImage(supabase, PRODUCT_BUCKET, previousUrlToDelete);
   }
 
   revalidatePath("/products");
@@ -97,7 +96,7 @@ export async function deleteProduct(id: string) {
   if (error) throw new Error(error.message);
 
   if (existing?.image_url) {
-    await deleteProductPhoto(supabase, existing.image_url);
+    await deleteImage(supabase, PRODUCT_BUCKET, existing.image_url);
   }
 
   revalidatePath("/products");

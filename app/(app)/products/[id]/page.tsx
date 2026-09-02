@@ -4,7 +4,7 @@ import { createClient } from "@/lib/supabase/server";
 import { getProfile } from "@/lib/auth";
 import { updateProduct } from "./actions";
 import { DeleteButton } from "./delete-button";
-import { PhotoPicker } from "../photo-picker";
+import { PhotoPicker } from "../../photo-picker";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";

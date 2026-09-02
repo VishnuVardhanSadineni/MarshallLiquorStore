@@ -10,6 +10,13 @@ type FeaturedProduct = {
   image_url: string | null;
 };
 
+type CategoryTile = {
+  id: string;
+  name: string;
+  description: string | null;
+  image_url: string | null;
+};
+
 export const revalidate = 60; // refresh featured bottles every minute
 
 const MAPS_URL = "https://maps.app.goo.gl/uXotNg5kVUvXVT4t5";
@@ -17,7 +24,10 @@ const INSTAGRAM_URL = "https://www.instagram.com/marshallliquor.613";
 const FACEBOOK_URL = "https://www.facebook.com/profile.php?id=100093053714579";
 
 export default async function LandingPage() {
-  const featured = await getFeaturedBottles();
+  const [featured, categories] = await Promise.all([
+    getFeaturedBottles(),
+    getCategories(),
+  ]);
 
   return (
     <div className="min-h-screen">
@@ -26,7 +36,7 @@ export default async function LandingPage() {
       <main>
         <Hero />
         <Featured products={featured} />
-        <Categories />
+        {categories.length > 0 && <Categories categories={categories} />}
         <Story />
         <Visit />
       </main>
@@ -37,6 +47,19 @@ export default async function LandingPage() {
 }
 
 /* --------------------------------- data -------------------------------- */
+
+async function getCategories(): Promise<CategoryTile[]> {
+  try {
+    const admin = createAdminClient();
+    const { data } = await admin
+      .from("categories")
+      .select("id, name, description, image_url")
+      .order("name", { ascending: true });
+    return (data ?? []) as CategoryTile[];
+  } catch {
+    return [];
+  }
+}
 
 async function getFeaturedBottles(): Promise<FeaturedProduct[]> {
   try {
@@ -305,46 +328,16 @@ function PlaceholderBottle({ label }: { label: string }) {
 
 /* ----------------------------- categories ------------------------------ */
 
-const CATEGORIES = [
-  {
-    label: "Wine",
-    body: "Reds, whites, sparkling. Small producers, curated by region.",
-    gradient: "from-rose-900 via-rose-800 to-amber-900",
-    file: "wine.jpg",
-  },
-  {
-    label: "Whiskey & Bourbon",
-    body: "Single malts, small-batch bourbons, ryes worth a slow sip.",
-    gradient: "from-amber-900 via-amber-800 to-orange-900",
-    file: "whiskey.jpg",
-  },
-  {
-    label: "Beer",
-    body: "Cold six-packs, IPAs, lagers, and local craft on rotation.",
-    gradient: "from-emerald-900 via-emerald-800 to-teal-900",
-    file: "beer.jpg",
-  },
-  {
-    label: "Tequila & Mezcal",
-    body: "Blanco, reposado, añejo — and a few mezcals from Oaxaca.",
-    gradient: "from-lime-900 via-emerald-800 to-emerald-950",
-    file: "tequila.jpg",
-  },
-  {
-    label: "Vodka & Gin",
-    body: "House pours to top-shelf. Botanical gins from around the world.",
-    gradient: "from-sky-900 via-slate-800 to-slate-900",
-    file: "vodka-gin.jpg",
-  },
-  {
-    label: "Mixers & Bitters",
-    body: "Tonic, sodas, syrups, cherries. Everything for the home bar.",
-    gradient: "from-orange-800 via-rose-800 to-rose-900",
-    file: "mixers.jpg",
-  },
+const CATEGORY_GRADIENTS = [
+  "from-rose-900 via-rose-800 to-amber-900",
+  "from-amber-900 via-amber-800 to-orange-900",
+  "from-emerald-900 via-emerald-800 to-teal-900",
+  "from-lime-900 via-emerald-800 to-emerald-950",
+  "from-sky-900 via-slate-800 to-slate-900",
+  "from-orange-800 via-rose-800 to-rose-900",
 ];
 
-function Categories() {
+function Categories({ categories }: { categories: CategoryTile[] }) {
   return (
     <section
       id="categories"
@@ -363,57 +356,57 @@ function Categories() {
         </p>
       </div>
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        {CATEGORIES.map((c) => (
-          <CategoryTile key={c.label} {...c} />
+        {categories.map((c, i) => (
+          <CategoryCard
+            key={c.id}
+            category={c}
+            gradient={CATEGORY_GRADIENTS[i % CATEGORY_GRADIENTS.length]}
+          />
         ))}
       </div>
     </section>
   );
 }
 
-function CategoryTile({
-  label,
-  body,
+function CategoryCard({
+  category,
   gradient,
-  file,
 }: {
-  label: string;
-  body: string;
+  category: CategoryTile;
   gradient: string;
-  file: string;
 }) {
   return (
     <div className="group relative overflow-hidden rounded-2xl border border-border/70 bg-card shadow-sm">
       <div className="relative aspect-[5/4] overflow-hidden">
-        {/*
-          Category image slot. Drop a photo at:
-          public/images/categories/${file}
-          Then uncomment the <img> below and delete the gradient div.
-        */}
-        {/* <img
-          src={`/images/categories/${file}`}
-          alt={label}
-          loading="lazy"
-          className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.04]"
-        /> */}
-        <div
-          data-image-file={file}
-          className={
-            "absolute inset-0 bg-gradient-to-br " +
-            gradient +
-            " transition-transform duration-500 group-hover:scale-[1.04]"
-          }
-        />
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_20%,rgba(255,255,255,0.18),transparent_55%)]" />
+        {category.image_url ? (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img
+            src={category.image_url}
+            alt={category.name}
+            loading="lazy"
+            className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.04]"
+          />
+        ) : (
+          <div
+            className={
+              "absolute inset-0 bg-gradient-to-br " +
+              gradient +
+              " transition-transform duration-500 group-hover:scale-[1.04]"
+            }
+          />
+        )}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent" />
         <div className="absolute inset-x-5 bottom-5">
-          <p className="font-heading text-2xl text-white leading-tight">
-            {label}
+          <p className="font-heading text-2xl text-white leading-tight drop-shadow-sm">
+            {category.name}
           </p>
         </div>
       </div>
-      <div className="p-5">
-        <p className="text-sm text-muted-foreground">{body}</p>
-      </div>
+      {category.description && (
+        <div className="p-5">
+          <p className="text-sm text-muted-foreground">{category.description}</p>
+        </div>
+      )}
     </div>
   );
 }

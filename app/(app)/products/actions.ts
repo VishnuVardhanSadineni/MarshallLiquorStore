@@ -4,7 +4,9 @@ import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
 import { requireAdmin } from "@/lib/auth";
-import { uploadProductPhoto } from "./photo-storage";
+import { uploadImage } from "@/lib/supabase/storage";
+
+const PRODUCT_BUCKET = "product-images";
 
 function parseNumber(value: FormDataEntryValue | null): number | null {
   if (value === null || value === "") return null;
@@ -34,8 +36,9 @@ export async function createProduct(formData: FormData) {
   }
 
   const supabase = await createClient();
-  const image_url = await uploadProductPhoto(
+  const image_url = await uploadImage(
     supabase,
+    PRODUCT_BUCKET,
     photo instanceof File ? photo : null,
   );
 

@@ -1,15 +1,17 @@
 import Link from "next/link";
 import { requireAdmin } from "@/lib/auth";
 import { createCategory } from "../actions";
+import { PhotoPicker } from "../../photo-picker";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 
 export default async function NewCategoryPage() {
   await requireAdmin();
 
   return (
-    <div className="mx-auto max-w-xl space-y-8">
+    <div className="mx-auto max-w-2xl space-y-8">
       <div className="space-y-3">
         <Link
           href="/categories"
@@ -25,14 +27,28 @@ export default async function NewCategoryPage() {
             Add a category
           </h1>
           <p className="text-sm text-muted-foreground">
-            Give it a short name like &ldquo;Bourbon&rdquo; or &ldquo;Craft
-            Beer&rdquo;.
+            Give it a short name, a photo, and a line customers see on the
+            storefront.
           </p>
         </div>
       </div>
 
-      <form action={createCategory} className="space-y-6">
-        <section className="rounded-2xl border border-border/70 bg-card p-5 shadow-sm sm:p-8 space-y-5">
+      <form
+        action={createCategory}
+        className="space-y-6"
+        encType="multipart/form-data"
+      >
+        <FormSection
+          title="Photo"
+          description="Shows on the storefront tile. A close-up of a bottle or shelf works great."
+        >
+          <PhotoPicker />
+        </FormSection>
+
+        <FormSection
+          title="Details"
+          description="Name is required. Description shows as a caption on the storefront."
+        >
           <div className="space-y-2">
             <Label htmlFor="name" className="flex items-center gap-1">
               Name
@@ -48,7 +64,17 @@ export default async function NewCategoryPage() {
               required
             />
           </div>
-        </section>
+          <div className="space-y-2">
+            <Label htmlFor="description">Description</Label>
+            <Textarea
+              id="description"
+              name="description"
+              rows={3}
+              maxLength={200}
+              placeholder="A one-liner customers will see under this tile on the home page."
+            />
+          </div>
+        </FormSection>
 
         <div className="flex flex-col-reverse gap-3 border-t border-border/60 pt-6 sm:flex-row sm:items-center sm:justify-end">
           <Link
@@ -66,5 +92,25 @@ export default async function NewCategoryPage() {
         </div>
       </form>
     </div>
+  );
+}
+
+function FormSection({
+  title,
+  description,
+  children,
+}: {
+  title: string;
+  description: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <section className="rounded-2xl border border-border/70 bg-card p-5 shadow-sm sm:p-8">
+      <div className="mb-6 flex flex-col gap-1">
+        <h2 className="font-heading text-xl text-foreground">{title}</h2>
+        <p className="text-sm text-muted-foreground">{description}</p>
+      </div>
+      <div className="space-y-5">{children}</div>
+    </section>
   );
 }
