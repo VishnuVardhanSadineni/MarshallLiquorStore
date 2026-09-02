@@ -17,13 +17,13 @@ export default function LoginPage() {
         <div className="mb-8 text-center">
           <div className="inline-flex items-center gap-2 text-primary">
             <span className="inline-block h-2 w-2 rounded-full bg-primary" aria-hidden />
-            <span className="text-xs uppercase tracking-[0.24em] font-medium">Inventory</span>
+            <span className="text-xs uppercase tracking-[0.24em] font-medium">Marshall Liquor</span>
           </div>
           <h1 className="mt-3 font-heading text-4xl leading-tight text-foreground">
-            Welcome back
+            Staff sign in
           </h1>
           <p className="mt-2 text-sm text-muted-foreground">
-            Sign in to check the shelves and stock up.
+            Access the back-of-house inventory tools.
           </p>
         </div>
 
@@ -64,7 +64,7 @@ export default function LoginPage() {
         </div>
 
         <p className="mt-6 text-center text-xs text-muted-foreground">
-          New team member? Ask your admin to add you.
+          New team member? Ask a manager to add you.
         </p>
       </div>
     </div>

@@ -23,11 +23,11 @@ export default async function AppLayout({
             <Link
               href="/dashboard"
               className="group flex items-center gap-2 shrink-0"
-              aria-label="Inventory home"
+              aria-label="Marshall staff home"
             >
               <BrandMark />
               <span className="hidden sm:inline font-heading text-xl leading-none text-foreground">
-                Inventory
+                Marshall
               </span>
             </Link>
             <HeaderNav isAdmin={isAdmin} />

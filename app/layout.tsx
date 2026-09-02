@@ -20,8 +20,9 @@ const fraunces = Fraunces({
 });
 
 export const metadata: Metadata = {
-  title: "Inventory Management",
-  description: "Basic inventory management for a single-location retail store.",
+  title: "Marshall Liquor Store",
+  description:
+    "Family-owned wine, spirits, and beer shop. Browse our selection, then stop by.",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
