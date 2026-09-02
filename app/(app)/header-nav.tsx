@@ -15,6 +15,11 @@ export function HeaderNav({ isAdmin }: { isAdmin: boolean }) {
       matcher: (p) => p === "/dashboard" || p.startsWith("/dashboard/"),
     },
     {
+      href: "/orders",
+      label: "Orders",
+      matcher: (p) => p === "/orders" || p.startsWith("/orders/"),
+    },
+    {
       href: "/products",
       label: "Products",
       matcher: (p) => p === "/products" || p.startsWith("/products/"),
