@@ -2,6 +2,7 @@
 
 import { useState, useTransition } from "react";
 import { toast } from "sonner";
+import { isNextControlFlowError } from "@/lib/next-error";
 import { Button } from "@/components/ui/button";
 import {
   AlertDialog,
@@ -41,6 +42,7 @@ export function DeleteButton({ id, name }: { id: string; name: string }) {
                 try {
                   await deleteProduct(id);
                 } catch (err) {
+                  if (isNextControlFlowError(err)) throw err;
                   setOpen(false);
                   toast.error(err instanceof Error ? err.message : "Failed to delete product");
                 }

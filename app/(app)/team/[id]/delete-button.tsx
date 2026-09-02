@@ -2,6 +2,7 @@
 
 import { useState, useTransition } from "react";
 import { toast } from "sonner";
+import { isNextControlFlowError } from "@/lib/next-error";
 import { Button } from "@/components/ui/button";
 import {
   AlertDialog,
@@ -49,6 +50,7 @@ export function DeleteTeamMemberButton({
                 try {
                   await deleteTeamMember(id);
                 } catch (err) {
+                  if (isNextControlFlowError(err)) throw err;
                   setOpen(false);
                   toast.error(
                     err instanceof Error ? err.message : "Failed to delete account",
