@@ -205,35 +205,14 @@ function Hero() {
           </dl>
         </div>
 
-        {/*
-          Hero image slot.
-          Drop a photo at: public/images/hero-storefront.jpg (or .webp).
-          Then uncomment the <img> below and delete the gradient block.
-        */}
+        {/* Hero image — public/images/hero-storefront.png */}
         <div className="relative">
-          {/* <img
-            src="/images/hero-storefront.jpg"
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src="/images/hero-storefront.png"
             alt="Inside Marshall Liquor Store"
-            className="w-full aspect-[4/5] rounded-3xl object-cover border border-border shadow-[0_40px_100px_-40px_oklch(0.4_0.08_40_/_0.45)]"
-          /> */}
-          <div className="relative aspect-[4/5] w-full max-w-md mx-auto overflow-hidden rounded-3xl border border-border shadow-[0_40px_100px_-40px_oklch(0.4_0.08_40_/_0.45)]">
-            <div className="absolute inset-0 bg-gradient-to-br from-primary/30 via-amber-800/40 to-rose-900/60" />
-            <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,rgba(255,255,255,0.15),transparent_60%)]" />
-            <div className="absolute inset-x-8 bottom-8 rounded-2xl border border-white/15 bg-black/25 backdrop-blur px-5 py-4 text-white/90">
-              <p className="text-[10px] uppercase tracking-[0.24em] opacity-70">
-                Curator&apos;s pick
-              </p>
-              <p className="font-heading text-2xl mt-1 leading-tight">
-                Rye of the month
-              </p>
-              <p className="text-sm opacity-80 mt-0.5">
-                Aged twelve years in charred oak.
-              </p>
-            </div>
-            <div className="absolute top-6 left-6 rounded-full bg-white/20 backdrop-blur px-3 py-1 text-[10px] uppercase tracking-[0.24em] text-white/90">
-              In-store now
-            </div>
-          </div>
+            className="w-full max-w-md mx-auto aspect-[4/5] rounded-3xl object-cover border border-border shadow-[0_40px_100px_-40px_oklch(0.4_0.08_40_/_0.45)]"
+          />
         </div>
       </div>
     </section>
