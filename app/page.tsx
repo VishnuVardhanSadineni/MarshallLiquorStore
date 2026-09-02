@@ -236,16 +236,14 @@ function Specials({ products }: { products: FeaturedProduct[] }) {
       id="featured"
       className="mx-auto max-w-6xl px-4 sm:px-6 py-16 sm:py-24 space-y-10"
     >
-      <div className="flex flex-wrap items-end justify-between gap-4">
-        <div className="space-y-2">
-          <span className="text-xs uppercase tracking-[0.24em] text-primary font-medium">
-            This week
-          </span>
-          <h2 className="font-heading text-3xl sm:text-4xl text-foreground">
-            This Week&apos;s Special.
-          </h2>
-        </div>
-        <p className="text-sm text-muted-foreground max-w-sm">
+      <div className="space-y-2">
+        <span className="text-xs uppercase tracking-[0.24em] text-primary font-medium">
+          This week
+        </span>
+        <h2 className="font-heading text-3xl sm:text-4xl text-foreground">
+          This Week&apos;s Special.
+        </h2>
+        <p className="max-w-xl text-muted-foreground">
           Hand-picked by our team. Come in and ask about them.
         </p>
       </div>
