@@ -29,6 +29,8 @@ export async function updateProduct(id: string, formData: FormData) {
   const price = parseNumber(formData.get("price"));
   const cost = parseNumber(formData.get("cost"));
   const stock = parseNumber(formData.get("stock")) ?? 0;
+  const is_active = formData.get("is_active") === "on";
+  const is_special = formData.get("is_special") === "on";
   const photo = formData.get("photo");
   const removePhoto = formData.get("remove_photo") === "1";
 
@@ -67,6 +69,8 @@ export async function updateProduct(id: string, formData: FormData) {
       price,
       cost,
       stock,
+      is_active,
+      is_special,
       image_url: nextImageUrl,
     })
     .eq("id", id);
@@ -79,6 +83,7 @@ export async function updateProduct(id: string, formData: FormData) {
 
   revalidatePath("/products");
   revalidatePath(`/products/${id}`);
+  revalidatePath("/");
   redirect(`/products/${id}`);
 }
 
@@ -100,5 +105,6 @@ export async function deleteProduct(id: string) {
   }
 
   revalidatePath("/products");
+  revalidatePath("/");
   redirect("/products");
 }

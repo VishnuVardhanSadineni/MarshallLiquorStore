@@ -20,6 +20,8 @@ type Product = {
   price: number;
   stock: number;
   image_url: string | null;
+  is_active: boolean;
+  is_special: boolean;
 };
 
 export default async function ProductsPage({
@@ -35,7 +37,7 @@ export default async function ProductsPage({
   let query = supabase
     .from("products")
     .select(
-      "id, sku, name, price, stock, image_url, category:categories(name)",
+      "id, sku, name, price, stock, image_url, is_active, is_special, category:categories(name)",
     )
     .order("created_at", { ascending: false })
     .limit(500);
@@ -144,6 +146,14 @@ export default async function ProductsPage({
                           </>
                         )}
                       </p>
+                      {(p.is_special || !p.is_active) && (
+                        <div className="mt-1.5">
+                          <StatusPills
+                            isActive={p.is_active}
+                            isSpecial={p.is_special}
+                          />
+                        </div>
+                      )}
                       <div className="mt-2.5 flex items-center justify-between">
                         <StockPill value={p.stock} />
                         <span className="text-sm text-primary">
@@ -192,7 +202,15 @@ export default async function ProductsPage({
                   <TableCell className="font-mono text-xs text-muted-foreground">
                     {p.sku}
                   </TableCell>
-                  <TableCell className="font-medium">{p.name}</TableCell>
+                  <TableCell className="font-medium">
+                    <span className="flex items-center gap-2 flex-wrap">
+                      {p.name}
+                      <StatusPills
+                        isActive={p.is_active}
+                        isSpecial={p.is_special}
+                      />
+                    </span>
+                  </TableCell>
                   <TableCell className="text-muted-foreground">
                     {p.category?.name ?? "—"}
                   </TableCell>
@@ -264,6 +282,38 @@ function Thumbnail({
       style={{ width: size, height: size }}
       className="shrink-0 rounded-lg border border-border/60 object-cover bg-muted"
     />
+  );
+}
+
+function StatusPills({
+  isActive,
+  isSpecial,
+}: {
+  isActive: boolean;
+  isSpecial: boolean;
+}) {
+  if (isActive && !isSpecial) return null;
+  return (
+    <span className="inline-flex flex-wrap items-center gap-1">
+      {!isActive && (
+        <span className="inline-flex items-center gap-1 rounded-full border border-border bg-muted px-2 py-0.5 text-[10px] uppercase tracking-wider text-muted-foreground">
+          <span
+            className="inline-block h-1.5 w-1.5 rounded-full bg-muted-foreground/60"
+            aria-hidden
+          />
+          Inactive
+        </span>
+      )}
+      {isSpecial && (
+        <span className="inline-flex items-center gap-1 rounded-full border border-primary/30 bg-primary/10 px-2 py-0.5 text-[10px] uppercase tracking-wider text-primary">
+          <span
+            className="inline-block h-1.5 w-1.5 rounded-full bg-primary"
+            aria-hidden
+          />
+          Featured
+        </span>
+      )}
+    </span>
   );
 }
 

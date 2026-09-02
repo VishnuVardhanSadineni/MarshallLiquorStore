@@ -5,6 +5,7 @@ import { getProfile } from "@/lib/auth";
 import { updateProduct } from "./actions";
 import { DeleteButton } from "./delete-button";
 import { PhotoPicker } from "../../photo-picker";
+import { ToggleSwitch } from "../toggle-switch";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -20,6 +21,8 @@ type Product = {
   cost: string | null;
   stock: number;
   image_url: string | null;
+  is_active: boolean;
+  is_special: boolean;
 };
 
 export default async function ProductDetailPage({
@@ -36,7 +39,7 @@ export default async function ProductDetailPage({
     supabase
       .from("products")
       .select(
-        "id, sku, name, description, category_id, price, cost, stock, image_url",
+        "id, sku, name, description, category_id, price, cost, stock, image_url, is_active, is_special",
       )
       .eq("id", id)
       .single(),
@@ -82,6 +85,24 @@ export default async function ProductDetailPage({
 
       <form action={boundUpdate} className="space-y-6" encType="multipart/form-data">
         <fieldset disabled={!isAdmin} className="space-y-6 group">
+          <FormSection
+            title="Visibility"
+            description="Control where this bottle appears."
+          >
+            <ToggleSwitch
+              name="is_active"
+              label="Active"
+              description="Visible to customers on the storefront."
+              defaultChecked={product.is_active}
+            />
+            <ToggleSwitch
+              name="is_special"
+              label="Featured"
+              description="Show in This Week's Special on the home page."
+              defaultChecked={product.is_special}
+            />
+          </FormSection>
+
           <FormSection
             title="Photo"
             description={

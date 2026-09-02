@@ -3,6 +3,7 @@ import { requireAdmin } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
 import { createProduct } from "../actions";
 import { PhotoPicker } from "../../photo-picker";
+import { ToggleSwitch } from "../toggle-switch";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -42,6 +43,23 @@ export default async function NewProductPage() {
       </div>
 
       <form action={createProduct} className="space-y-6" encType="multipart/form-data">
+        <FormSection
+          title="Visibility"
+          description="Control where this bottle appears."
+        >
+          <ToggleSwitch
+            name="is_active"
+            label="Active"
+            description="Visible to customers on the storefront."
+            defaultChecked
+          />
+          <ToggleSwitch
+            name="is_special"
+            label="Featured"
+            description="Show in This Week's Special on the home page."
+          />
+        </FormSection>
+
         <FormSection
           title="Photo"
           description="A shot of the label helps staff spot the bottle in a hurry."

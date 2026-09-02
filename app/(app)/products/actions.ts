@@ -29,6 +29,8 @@ export async function createProduct(formData: FormData) {
   const price = parseNumber(formData.get("price"));
   const cost = parseNumber(formData.get("cost"));
   const stock = parseNumber(formData.get("stock")) ?? 0;
+  const is_active = formData.get("is_active") === "on";
+  const is_special = formData.get("is_special") === "on";
   const photo = formData.get("photo");
 
   if (!sku || !name || price === null || price < 0 || stock < 0) {
@@ -52,6 +54,8 @@ export async function createProduct(formData: FormData) {
       price,
       cost,
       stock,
+      is_active,
+      is_special,
       image_url,
     })
     .select("id")
@@ -60,5 +64,6 @@ export async function createProduct(formData: FormData) {
   if (error) throw new Error(error.message);
 
   revalidatePath("/products");
+  revalidatePath("/");
   redirect(`/products/${data.id}`);
 }

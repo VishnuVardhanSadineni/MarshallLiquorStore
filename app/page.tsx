@@ -24,10 +24,13 @@ const INSTAGRAM_URL = "https://www.instagram.com/marshallliquor.613";
 const FACEBOOK_URL = "https://www.facebook.com/profile.php?id=100093053714579";
 
 export default async function LandingPage() {
-  const [featured, categories] = await Promise.all([
-    getFeaturedBottles(),
+  const [specials, categories] = await Promise.all([
+    getSpecials(),
     getCategories(),
   ]);
+
+  const showSpecials =
+    specials.rows.length > 0 || !specials.adminAvailable;
 
   return (
     <div className="min-h-screen">
@@ -35,7 +38,7 @@ export default async function LandingPage() {
 
       <main>
         <Hero />
-        <Featured products={featured} />
+        {showSpecials && <Specials products={specials.rows} />}
         {categories.length > 0 && <Categories categories={categories} />}
         <Story />
         <Visit />
@@ -61,23 +64,24 @@ async function getCategories(): Promise<CategoryTile[]> {
   }
 }
 
-async function getFeaturedBottles(): Promise<FeaturedProduct[]> {
+async function getSpecials(): Promise<
+  { rows: FeaturedProduct[]; adminAvailable: boolean }
+> {
   try {
     const admin = createAdminClient();
     const { data } = await admin
       .from("products")
       .select("id, name, price, image_url, category:categories(name)")
+      .eq("is_active", true)
+      .eq("is_special", true)
       .order("created_at", { ascending: false })
-      .limit(8);
-    const rows = (data ?? []) as unknown as FeaturedProduct[];
-    // prefer bottles that actually have a photo
-    const withPhoto = rows.filter((r) => r.image_url).slice(0, 4);
-    if (withPhoto.length >= 4) return withPhoto;
-    return [...withPhoto, ...rows.filter((r) => !r.image_url)].slice(0, 4);
+      .limit(4);
+    return {
+      rows: (data ?? []) as unknown as FeaturedProduct[],
+      adminAvailable: true,
+    };
   } catch {
-    // admin client not configured yet, or DB unavailable — the section
-    // will just show placeholder tiles below
-    return [];
+    return { rows: [], adminAvailable: false };
   }
 }
 
@@ -94,7 +98,7 @@ function TopHeader() {
           </span>
         </Link>
         <nav className="hidden md:flex items-center gap-1 text-sm">
-          <HeaderLink href="#featured">Featured</HeaderLink>
+          <HeaderLink href="#featured">Specials</HeaderLink>
           <HeaderLink href="#categories">Categories</HeaderLink>
           <HeaderLink href={MAPS_URL} external>
             Visit
@@ -242,9 +246,10 @@ function Hero() {
   );
 }
 
-/* ------------------------------ featured ------------------------------- */
+/* ------------------------------ specials ------------------------------- */
 
-function Featured({ products }: { products: FeaturedProduct[] }) {
+function Specials({ products }: { products: FeaturedProduct[] }) {
+  const rows = products.length > 0 ? products : PLACEHOLDER_FEATURED;
   return (
     <section
       id="featured"
@@ -256,16 +261,16 @@ function Featured({ products }: { products: FeaturedProduct[] }) {
             This week
           </span>
           <h2 className="font-heading text-3xl sm:text-4xl text-foreground">
-            Bottles we&apos;re pouring into.
+            This Week&apos;s Special.
           </h2>
         </div>
         <p className="text-sm text-muted-foreground max-w-sm">
-          A small selection from the newest arrivals. Prices as marked in-store.
+          Hand-picked by our team. Come in and ask about them.
         </p>
       </div>
 
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        {(products.length > 0 ? products : PLACEHOLDER_FEATURED).map((p) => (
+        {rows.map((p) => (
           <FeaturedCard key={p.id} product={p} />
         ))}
       </div>
@@ -653,7 +658,7 @@ function Footer() {
         </div>
         <div className="flex flex-wrap gap-x-6 gap-y-2 text-xs text-muted-foreground">
           <a href="#featured" className="hover:text-foreground">
-            Featured
+            Specials
           </a>
           <a href="#categories" className="hover:text-foreground">
             Categories
