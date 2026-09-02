@@ -71,7 +71,9 @@ function TopHeader() {
         <nav className="hidden md:flex items-center gap-1 text-sm">
           <HeaderLink href="#featured">Featured</HeaderLink>
           <HeaderLink href="#categories">Categories</HeaderLink>
-          <HeaderLink href="#visit">Visit</HeaderLink>
+          <HeaderLink href={MAPS_URL} external>
+            Visit
+          </HeaderLink>
         </nav>
         <div className="flex items-center gap-2">
           <a
@@ -94,10 +96,22 @@ function TopHeader() {
   );
 }
 
-function HeaderLink({ href, children }: { href: string; children: React.ReactNode }) {
+function HeaderLink({
+  href,
+  children,
+  external,
+}: {
+  href: string;
+  children: React.ReactNode;
+  external?: boolean;
+}) {
+  const externalProps = external
+    ? { target: "_blank" as const, rel: "noopener noreferrer" }
+    : {};
   return (
     <a
       href={href}
+      {...externalProps}
       className="px-3 py-1.5 rounded-md text-foreground/80 hover:text-foreground hover:bg-accent transition-colors"
     >
       {children}
@@ -521,7 +535,9 @@ function Visit() {
             />
             <InfoBlock
               title="Call us"
-              lines={["(618) 707-5250"]}
+              lines={[
+                { text: "(618) 707-5250", href: "tel:+16187075250" },
+              ]}
             />
           </div>
         </div>
@@ -530,16 +546,30 @@ function Visit() {
   );
 }
 
-function InfoBlock({ title, lines }: { title: string; lines: string[] }) {
+type InfoLine = string | { text: string; href: string };
+
+function InfoBlock({ title, lines }: { title: string; lines: InfoLine[] }) {
   return (
     <div>
       <p className="text-xs uppercase tracking-wider text-muted-foreground font-medium">
         {title}
       </p>
       <div className="mt-2 space-y-0.5 text-sm text-foreground">
-        {lines.map((line) => (
-          <p key={line}>{line}</p>
-        ))}
+        {lines.map((line) => {
+          if (typeof line === "string") {
+            return <p key={line}>{line}</p>;
+          }
+          return (
+            <p key={line.text}>
+              <a
+                href={line.href}
+                className="text-foreground hover:text-primary underline-offset-4 hover:underline transition-colors"
+              >
+                {line.text}
+              </a>
+            </p>
+          );
+        })}
       </div>
     </div>
   );
