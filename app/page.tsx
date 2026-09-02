@@ -12,6 +12,8 @@ type FeaturedProduct = {
 
 export const revalidate = 60; // refresh featured bottles every minute
 
+const MAPS_URL = "https://share.google/eJHZg4FMsmg9s0nym";
+
 export default async function LandingPage() {
   const featured = await getFeaturedBottles();
 
@@ -73,7 +75,9 @@ function TopHeader() {
         </nav>
         <div className="flex items-center gap-2">
           <a
-            href="#visit"
+            href={MAPS_URL}
+            target="_blank"
+            rel="noopener noreferrer"
             className={buttonVariants({ size: "sm" }) + " hidden sm:inline-flex"}
           >
             Visit us
@@ -155,7 +159,9 @@ function Hero() {
               Browse the shelves
             </a>
             <a
-              href="#visit"
+              href={MAPS_URL}
+              target="_blank"
+              rel="noopener noreferrer"
               className={buttonVariants({ variant: "ghost", size: "lg" })}
             >
               Find the store →
@@ -464,7 +470,7 @@ function Visit() {
     >
       <div className="rounded-3xl border border-border/70 bg-card p-8 sm:p-12 shadow-sm">
         <div className="grid gap-10 lg:grid-cols-3">
-          <div className="space-y-2 lg:col-span-1">
+          <div className="space-y-4 lg:col-span-1">
             <span className="text-xs uppercase tracking-[0.24em] text-primary font-medium">
               Come see us
             </span>
@@ -474,6 +480,28 @@ function Visit() {
             <p className="text-muted-foreground">
               Free parking out front. Call ahead and we&apos;ll pull it for you.
             </p>
+            <a
+              href={MAPS_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className={buttonVariants({ size: "lg" }) + " shadow-sm"}
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="1.75"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                className="mr-1.5 h-4 w-4"
+                aria-hidden
+              >
+                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 1 1 18 0z" />
+                <circle cx="12" cy="10" r="3" />
+              </svg>
+              Get directions
+            </a>
           </div>
           <div className="grid gap-6 sm:grid-cols-3 lg:col-span-2">
             <InfoBlock
