@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { requireAdmin } from "@/lib/auth";
 import { createProduct } from "../actions";
+import { PhotoPicker } from "../photo-picker";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -33,7 +34,14 @@ export default async function NewProductPage() {
         </div>
       </div>
 
-      <form action={createProduct} className="space-y-6">
+      <form action={createProduct} className="space-y-6" encType="multipart/form-data">
+        <FormSection
+          title="Photo"
+          description="A picture helps staff recognize the product at a glance."
+        >
+          <PhotoPicker />
+        </FormSection>
+
         <FormSection
           title="Basics"
           description="The identifying details customers and staff will recognize."

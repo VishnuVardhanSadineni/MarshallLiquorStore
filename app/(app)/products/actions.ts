@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
 import { requireAdmin } from "@/lib/auth";
+import { uploadProductPhoto } from "./photo-storage";
 
 function parseNumber(value: FormDataEntryValue | null): number | null {
   if (value === null || value === "") return null;
@@ -21,15 +22,21 @@ export async function createProduct(formData: FormData) {
   const price = parseNumber(formData.get("price"));
   const cost = parseNumber(formData.get("cost"));
   const stock = parseNumber(formData.get("stock")) ?? 0;
+  const photo = formData.get("photo");
 
   if (!sku || !name || price === null || price < 0 || stock < 0) {
     throw new Error("Missing or invalid fields");
   }
 
   const supabase = await createClient();
+  const image_url = await uploadProductPhoto(
+    supabase,
+    photo instanceof File ? photo : null,
+  );
+
   const { data, error } = await supabase
     .from("products")
-    .insert({ sku, name, description, category, price, cost, stock })
+    .insert({ sku, name, description, category, price, cost, stock, image_url })
     .select("id")
     .single();
 

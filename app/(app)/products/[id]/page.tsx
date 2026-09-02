@@ -4,6 +4,7 @@ import { createClient } from "@/lib/supabase/server";
 import { getProfile } from "@/lib/auth";
 import { updateProduct } from "./actions";
 import { DeleteButton } from "./delete-button";
+import { PhotoPicker } from "../photo-picker";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -18,6 +19,7 @@ type Product = {
   price: string;
   cost: string | null;
   stock: number;
+  image_url: string | null;
 };
 
 export default async function ProductDetailPage({
@@ -32,7 +34,7 @@ export default async function ProductDetailPage({
 
   const { data, error } = await supabase
     .from("products")
-    .select("id, sku, name, description, category, price, cost, stock")
+    .select("id, sku, name, description, category, price, cost, stock, image_url")
     .eq("id", id)
     .single();
 
@@ -69,8 +71,19 @@ export default async function ProductDetailPage({
         </div>
       </div>
 
-      <form action={boundUpdate} className="space-y-6">
+      <form action={boundUpdate} className="space-y-6" encType="multipart/form-data">
         <fieldset disabled={!isAdmin} className="space-y-6 group">
+          <FormSection
+            title="Photo"
+            description={
+              isAdmin
+                ? "A picture helps staff recognize the product at a glance."
+                : "Product photo."
+            }
+          >
+            <PhotoPicker currentUrl={product.image_url} disabled={!isAdmin} />
+          </FormSection>
+
           <FormSection
             title="Basics"
             description="The identifying details customers and staff will recognize."

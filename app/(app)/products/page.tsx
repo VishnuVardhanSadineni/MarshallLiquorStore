@@ -19,6 +19,7 @@ type Product = {
   category: string | null;
   price: number;
   stock: number;
+  image_url: string | null;
 };
 
 export default async function ProductsPage({
@@ -33,7 +34,7 @@ export default async function ProductsPage({
 
   let query = supabase
     .from("products")
-    .select("id, sku, name, category, price, stock")
+    .select("id, sku, name, category, price, stock, image_url")
     .order("created_at", { ascending: false })
     .limit(500);
 
@@ -121,11 +122,17 @@ export default async function ProductsPage({
                   href={`/products/${p.id}`}
                   className="block rounded-2xl border border-border/70 bg-card p-4 shadow-sm transition-colors active:bg-accent/60"
                 >
-                  <div className="flex items-start justify-between gap-3">
+                  <div className="flex gap-3">
+                    <Thumbnail url={p.image_url} size={64} />
                     <div className="min-w-0 flex-1">
-                      <p className="truncate font-medium text-foreground">
-                        {p.name}
-                      </p>
+                      <div className="flex items-start justify-between gap-3">
+                        <p className="truncate font-medium text-foreground">
+                          {p.name}
+                        </p>
+                        <p className="font-medium tabular-nums text-foreground shrink-0">
+                          ${Number(p.price).toFixed(2)}
+                        </p>
+                      </div>
                       <p className="mt-0.5 truncate text-xs text-muted-foreground">
                         <span className="font-mono">{p.sku}</span>
                         {p.category && (
@@ -135,18 +142,13 @@ export default async function ProductsPage({
                           </>
                         )}
                       </p>
+                      <div className="mt-2.5 flex items-center justify-between">
+                        <StockPill value={p.stock} />
+                        <span className="text-sm text-primary">
+                          {isAdmin ? "Edit" : "View"} →
+                        </span>
+                      </div>
                     </div>
-                    <div className="text-right shrink-0">
-                      <p className="font-medium tabular-nums text-foreground">
-                        ${Number(p.price).toFixed(2)}
-                      </p>
-                    </div>
-                  </div>
-                  <div className="mt-3 flex items-center justify-between">
-                    <StockPill value={p.stock} />
-                    <span className="text-sm text-primary">
-                      {isAdmin ? "Edit" : "View"} →
-                    </span>
                   </div>
                 </Link>
               </li>
@@ -157,6 +159,7 @@ export default async function ProductsPage({
           <Table>
             <TableHeader>
               <TableRow className="border-border/50 hover:bg-transparent">
+                <TableHead className="w-16" />
                 <TableHead className="text-xs uppercase tracking-wider text-muted-foreground font-medium">
                   SKU
                 </TableHead>
@@ -181,6 +184,9 @@ export default async function ProductsPage({
                   key={p.id}
                   className="border-border/50 transition-colors hover:bg-accent/40"
                 >
+                  <TableCell className="py-2">
+                    <Thumbnail url={p.image_url} size={44} />
+                  </TableCell>
                   <TableCell className="font-mono text-xs text-muted-foreground">
                     {p.sku}
                   </TableCell>
@@ -213,6 +219,49 @@ export default async function ProductsPage({
         </>
       )}
     </div>
+  );
+}
+
+function Thumbnail({
+  url,
+  size,
+}: {
+  url: string | null;
+  size: number;
+}) {
+  if (!url) {
+    return (
+      <div
+        style={{ width: size, height: size }}
+        className="flex shrink-0 items-center justify-center rounded-lg border border-dashed border-border bg-muted/40 text-muted-foreground"
+        aria-hidden
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="1.5"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          className="h-1/2 w-1/2 opacity-60"
+        >
+          <rect x="3" y="4" width="18" height="16" rx="2" />
+          <circle cx="9" cy="10" r="2" />
+          <path d="M21 16l-5-5-8 8" />
+        </svg>
+      </div>
+    );
+  }
+  return (
+    // eslint-disable-next-line @next/next/no-img-element
+    <img
+      src={url}
+      alt=""
+      loading="lazy"
+      style={{ width: size, height: size }}
+      className="shrink-0 rounded-lg border border-border/60 object-cover bg-muted"
+    />
   );
 }
 
