@@ -19,13 +19,13 @@ export function HeaderNav({ isAdmin }: { isAdmin: boolean }) {
       label: "Products",
       matcher: (p) => p === "/products" || p.startsWith("/products/"),
     },
-  ];
-  if (isAdmin) {
-    items.push({
+    {
       href: "/categories",
       label: "Categories",
       matcher: (p) => p === "/categories" || p.startsWith("/categories/"),
-    });
+    },
+  ];
+  if (isAdmin) {
     items.push({
       href: "/team",
       label: "Team",

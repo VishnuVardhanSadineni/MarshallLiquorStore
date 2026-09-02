@@ -3,10 +3,26 @@
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
-import { requireAdmin } from "@/lib/auth";
+import { requireUser } from "@/lib/auth";
 import { uploadImage } from "@/lib/supabase/storage";
 
 const PRODUCT_BUCKET = "product-images";
+
+export async function updateStock(id: string, newStock: number) {
+  await requireUser();
+  if (!Number.isInteger(newStock) || newStock < 0) {
+    throw new Error("Stock must be a whole number of 0 or more.");
+  }
+  const supabase = await createClient();
+  const { error } = await supabase
+    .from("products")
+    .update({ stock: newStock })
+    .eq("id", id);
+  if (error) throw new Error(error.message);
+  revalidatePath("/products");
+  revalidatePath(`/products/${id}`);
+  revalidatePath("/");
+}
 
 function parseNumber(value: FormDataEntryValue | null): number | null {
   if (value === null || value === "") return null;
@@ -20,7 +36,7 @@ function parseCategoryId(value: FormDataEntryValue | null): string | null {
 }
 
 export async function createProduct(formData: FormData) {
-  await requireAdmin();
+  await requireUser();
 
   const sku = String(formData.get("sku") ?? "").trim();
   const name = String(formData.get("name") ?? "").trim();

@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { requireAdmin } from "@/lib/auth";
+import { requireUser } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
 import { updateCategory } from "./actions";
 import { DeleteCategoryButton } from "./delete-button";
@@ -15,7 +15,7 @@ export default async function EditCategoryPage({
 }: {
   params: Promise<{ id: string }>;
 }) {
-  await requireAdmin();
+  await requireUser();
   const { id } = await params;
   const supabase = await createClient();
 
