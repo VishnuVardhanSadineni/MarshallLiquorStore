@@ -423,27 +423,13 @@ function Story() {
   return (
     <section className="mx-auto max-w-6xl px-4 sm:px-6 py-16 sm:py-24">
       <div className="grid gap-10 lg:grid-cols-[0.9fr_1.1fr] lg:items-center">
-        {/*
-          Storefront photo slot. Drop a photo at:
-          public/images/storefront.jpg
-        */}
-        {/* <img
+        {/* Storefront photo — public/images/storefront.jpg */}
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
           src="/images/storefront.jpg"
           alt="Marshall Liquor Store from the sidewalk"
           className="w-full aspect-square rounded-3xl object-cover border border-border shadow-sm"
-        /> */}
-        <div className="relative aspect-square rounded-3xl overflow-hidden border border-border shadow-sm">
-          <div className="absolute inset-0 bg-gradient-to-br from-amber-900/60 via-primary/40 to-rose-900/60" />
-          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom,rgba(0,0,0,0.4),transparent_60%)]" />
-          <div className="absolute inset-x-6 bottom-6 text-white/90">
-            <p className="text-[10px] uppercase tracking-[0.24em] opacity-70">
-              Our store
-            </p>
-            <p className="font-heading text-2xl mt-1">
-              Corner of Main &amp; 5th
-            </p>
-          </div>
-        </div>
+        />
         <div className="space-y-5">
           <span className="text-xs uppercase tracking-[0.24em] text-primary font-medium">
             Our story
