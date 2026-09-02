@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { requireAdmin } from "@/lib/auth";
+import { requireUser } from "@/lib/auth";
 import { createCategory } from "../actions";
 import { PhotoPicker } from "../../photo-picker";
 import { Button, buttonVariants } from "@/components/ui/button";
@@ -8,7 +8,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 
 export default async function NewCategoryPage() {
-  await requireAdmin();
+  await requireUser();
 
   return (
     <div className="mx-auto max-w-2xl space-y-8">

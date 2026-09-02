@@ -2,14 +2,14 @@
 
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
-import { requireAdmin } from "@/lib/auth";
+import { requireUser } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
 import { uploadImage } from "@/lib/supabase/storage";
 
 const BUCKET = "category-images";
 
 export async function createCategory(formData: FormData) {
-  await requireAdmin();
+  await requireUser();
 
   const name = String(formData.get("name") ?? "").trim();
   const description =

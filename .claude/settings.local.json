@@ -10,7 +10,13 @@
       "Bash(npx *)",
       "Bash(rsync -a --exclude 'docs' --exclude '.superpowers' --exclude '.git' /tmp/inv-scaffold/ /Users/shubakar/Desktop/Work/InventoryManagement/)",
       "Bash(rm -rf /tmp/inv-scaffold)",
-      "Bash(npm install *)"
+      "Bash(npm install *)",
+      "Bash([ -f \"/Users/shubakar/Desktop/Work/InventoryManagement/$f\" ])",
+      "Bash(/Users/shubakar/.claude/plugins/cache/claude-plugins-official/superpowers/6.3.0/skills/subagent-driven-development/scripts/review-package *)",
+      "Bash(node -e \"const p = require\\('/Users/shubakar/Desktop/Work/InventoryManagement/node_modules/@supabase/ssr/package.json'\\); console.log\\(p.version\\)\")",
+      "Bash(node -e \"const p = require\\('/Users/shubakar/Desktop/Work/InventoryManagement/node_modules/@supabase/supabase-js/package.json'\\); console.log\\(p.version\\)\")",
+      "mcp__claude_ai_Supabase__list_projects",
+      "Bash(grep -E '\\\\.env\\(\\\\.|$\\)')"
     ]
   }
 }

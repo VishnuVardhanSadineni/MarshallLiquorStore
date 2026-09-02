@@ -3,7 +3,7 @@
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
-import { requireAdmin } from "@/lib/auth";
+import { requireUser } from "@/lib/auth";
 import { deleteImage, uploadImage } from "@/lib/supabase/storage";
 
 const PRODUCT_BUCKET = "product-images";
@@ -20,7 +20,7 @@ function parseCategoryId(value: FormDataEntryValue | null): string | null {
 }
 
 export async function updateProduct(id: string, formData: FormData) {
-  await requireAdmin();
+  await requireUser();
 
   const sku = String(formData.get("sku") ?? "").trim();
   const name = String(formData.get("name") ?? "").trim();
@@ -88,7 +88,7 @@ export async function updateProduct(id: string, formData: FormData) {
 }
 
 export async function deleteProduct(id: string) {
-  await requireAdmin();
+  await requireUser();
   const supabase = await createClient();
 
   const { data: existing } = await supabase

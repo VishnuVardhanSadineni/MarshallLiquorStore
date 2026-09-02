@@ -2,14 +2,14 @@
 
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
-import { requireAdmin } from "@/lib/auth";
+import { requireUser } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
 import { deleteImage, uploadImage } from "@/lib/supabase/storage";
 
 const BUCKET = "category-images";
 
 export async function updateCategory(id: string, formData: FormData) {
-  await requireAdmin();
+  await requireUser();
 
   const name = String(formData.get("name") ?? "").trim();
   const description =
@@ -65,7 +65,7 @@ export async function updateCategory(id: string, formData: FormData) {
 }
 
 export async function deleteCategory(id: string) {
-  await requireAdmin();
+  await requireUser();
   const supabase = await createClient();
 
   const { data: existing } = await supabase
