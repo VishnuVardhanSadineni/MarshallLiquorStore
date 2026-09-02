@@ -306,7 +306,9 @@ export default async function OrdersPage({
 }
 
 function StatusPill({ status }: { status: string }) {
-  const cls = STATUS_STYLE[status] ?? "border-border bg-muted text-muted-foreground";
+  const cls =
+    STATUS_STYLE[status] ?? "border-border bg-muted text-muted-foreground";
+  const isNew = status === "pending";
   return (
     <span
       className={
@@ -314,7 +316,15 @@ function StatusPill({ status }: { status: string }) {
         cls
       }
     >
-      <span className="inline-block h-1.5 w-1.5 rounded-full bg-current opacity-70" />
+      <span className="relative inline-flex h-1.5 w-1.5">
+        {isNew && (
+          <span
+            className="absolute inline-flex h-full w-full rounded-full bg-current opacity-70 animate-ping"
+            aria-hidden
+          />
+        )}
+        <span className="relative inline-block h-1.5 w-1.5 rounded-full bg-current opacity-90" />
+      </span>
       {STATUS_LABEL[status] ?? status}
     </span>
   );

@@ -4,6 +4,7 @@ import { requireUser } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
 import { updateOrder } from "./actions";
 import { DeleteOrderButton } from "./delete-button";
+import { StatusEditor } from "./status-editor";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -30,14 +31,6 @@ type Order = {
   updated_at: string;
   order_items: OrderItem[];
 };
-
-const STATUS_OPTIONS = [
-  { value: "pending", label: "New (pending)" },
-  { value: "confirmed", label: "Confirmed" },
-  { value: "ready", label: "Ready for pickup" },
-  { value: "picked_up", label: "Picked up" },
-  { value: "cancelled", label: "Cancelled" },
-];
 
 export default async function OrderDetailPage({
   params,
@@ -95,6 +88,18 @@ export default async function OrderDetailPage({
         </div>
       </div>
 
+      <StatusEditor
+        orderId={order.id}
+        initialStatus={
+          order.status as
+            | "pending"
+            | "confirmed"
+            | "ready"
+            | "picked_up"
+            | "cancelled"
+        }
+      />
+
       <div className="grid gap-6 lg:grid-cols-[1.4fr_1fr] items-start">
         <form action={boundUpdate} className="space-y-6">
           <FormSection title="Customer">
@@ -133,26 +138,6 @@ export default async function OrderDetailPage({
                 defaultValue={order.pickup_notes ?? ""}
                 maxLength={500}
               />
-            </Field>
-          </FormSection>
-
-          <FormSection title="Status">
-            <Field label="Order status" htmlFor="status" required>
-              <select
-                id="status"
-                name="status"
-                defaultValue={order.status}
-                className="flex h-9 w-full rounded-lg border border-input bg-background px-3 text-sm shadow-sm focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-ring/50 focus-visible:border-ring"
-              >
-                {STATUS_OPTIONS.map((s) => (
-                  <option key={s.value} value={s.value}>
-                    {s.label}
-                  </option>
-                ))}
-              </select>
-              <p className="text-xs text-muted-foreground">
-                Cancel keeps a record. Delete wipes it entirely.
-              </p>
             </Field>
           </FormSection>
 

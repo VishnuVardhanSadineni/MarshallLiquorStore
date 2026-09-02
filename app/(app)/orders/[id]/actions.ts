@@ -23,13 +23,11 @@ export async function updateOrder(id: string, formData: FormData) {
   const phone = String(formData.get("phone") ?? "").trim();
   const pickupNotes =
     String(formData.get("pickup_notes") ?? "").trim() || null;
-  const status = String(formData.get("status") ?? "").trim();
 
   if (!firstName) throw new Error("First name is required.");
   if (!lastName) throw new Error("Last name is required.");
   if (!phone || !PHONE_RE.test(phone))
     throw new Error("Enter a valid phone number.");
-  if (!VALID_STATUSES.has(status)) throw new Error("Invalid status.");
 
   const supabase = await createClient();
   const { error } = await supabase
@@ -39,7 +37,6 @@ export async function updateOrder(id: string, formData: FormData) {
       last_name: lastName,
       phone,
       pickup_notes: pickupNotes,
-      status,
     })
     .eq("id", id);
 
