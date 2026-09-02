@@ -479,24 +479,21 @@ function Visit() {
             <InfoBlock
               title="Address"
               lines={[
-                "123 Main Street",
-                "Springfield, ST 00000",
+                "613 Locust St, Suite A",
+                "Marshall, IL 62441",
               ]}
             />
             <InfoBlock
               title="Hours"
               lines={[
-                "Mon–Thu · 10a – 9p",
-                "Fri–Sat · 10a – 11p",
-                "Sun · 12p – 7p",
+                "Mon–Sat · 9a – 12a",
+                "Sun · 12p – 12a",
+                "Hours may differ on holidays",
               ]}
             />
             <InfoBlock
-              title="Get in touch"
-              lines={[
-                "(555) 555-0123",
-                "hello@marshallliquor.com",
-              ]}
+              title="Call us"
+              lines={["(618) 707-5250"]}
             />
           </div>
         </div>
