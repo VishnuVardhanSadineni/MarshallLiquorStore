@@ -1,6 +1,17 @@
 import Link from "next/link";
 import { buttonVariants } from "@/components/ui/button";
 import { createAdminClient } from "@/lib/supabase/admin";
+import {
+  BrandLockup,
+  BrandMark,
+  FACEBOOK_URL,
+  FacebookGlyph,
+  INSTAGRAM_URL,
+  InstagramGlyph,
+  MAPS_URL,
+  MarketingFooter,
+  SocialIconLink,
+} from "@/lib/marketing";
 
 type FeaturedProduct = {
   id: string;
@@ -18,10 +29,6 @@ type CategoryTile = {
 };
 
 export const revalidate = 60; // refresh featured bottles every minute
-
-const MAPS_URL = "https://maps.app.goo.gl/uXotNg5kVUvXVT4t5";
-const INSTAGRAM_URL = "https://www.instagram.com/marshallliquor.613";
-const FACEBOOK_URL = "https://www.facebook.com/profile.php?id=100093053714579";
 
 export default async function LandingPage() {
   const [specials, categories] = await Promise.all([
@@ -44,7 +51,14 @@ export default async function LandingPage() {
         <Visit />
       </main>
 
-      <Footer />
+      <MarketingFooter
+        nav={[
+          { href: "#featured", label: "Specials" },
+          { href: "/shop", label: "Shop" },
+          { href: MAPS_URL, label: "Visit", external: true },
+          { href: "/login", label: "Staff sign in" },
+        ]}
+      />
     </div>
   );
 }
@@ -91,15 +105,10 @@ function TopHeader() {
   return (
     <header className="sticky top-0 z-30 border-b border-border/60 bg-background/75 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="mx-auto max-w-6xl px-4 sm:px-6 h-14 sm:h-16 flex items-center justify-between gap-3">
-        <Link href="/" className="flex items-center gap-2 shrink-0">
-          <BrandMark />
-          <span className="font-heading text-lg sm:text-xl leading-none text-foreground">
-            Marshall <span className="text-primary italic">Liquor</span>
-          </span>
-        </Link>
+        <BrandLockup />
         <nav className="hidden md:flex items-center gap-1 text-sm">
           <HeaderLink href="#featured">Specials</HeaderLink>
-          <HeaderLink href="#categories">Categories</HeaderLink>
+          <HeaderLink href="/shop">Shop</HeaderLink>
           <HeaderLink href={MAPS_URL} external>
             Visit
           </HeaderLink>
@@ -145,31 +154,6 @@ function HeaderLink({
     >
       {children}
     </a>
-  );
-}
-
-function BrandMark() {
-  return (
-    <span
-      className="relative flex h-8 w-8 items-center justify-center rounded-lg bg-primary/12 text-primary"
-      aria-hidden
-    >
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="1.6"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        className="h-4 w-4"
-      >
-        <path d="M3 7.5l9-4 9 4v9l-9 4-9-4v-9z" />
-        <path d="M3 7.5l9 4 9-4" />
-        <path d="M12 11.5v9" />
-        <path d="M7.5 5.25l9 4" />
-      </svg>
-    </span>
   );
 }
 
@@ -381,7 +365,10 @@ function CategoryCard({
   gradient: string;
 }) {
   return (
-    <div className="group relative overflow-hidden rounded-2xl border border-border/70 bg-card shadow-sm">
+    <Link
+      href={`/shop/${category.id}`}
+      className="group relative overflow-hidden rounded-2xl border border-border/70 bg-card shadow-sm block hover:-translate-y-0.5 transition-transform"
+    >
       <div className="relative aspect-[5/4] overflow-hidden">
         {category.image_url ? (
           // eslint-disable-next-line @next/next/no-img-element
@@ -412,7 +399,7 @@ function CategoryCard({
           <p className="text-sm text-muted-foreground">{category.description}</p>
         </div>
       )}
-    </div>
+    </Link>
   );
 }
 
@@ -571,116 +558,3 @@ function InfoBlock({ title, lines }: { title: string; lines: InfoLine[] }) {
   );
 }
 
-/* ------------------------------ footer --------------------------------- */
-
-function SocialIconLink({
-  href,
-  label,
-  icon,
-}: {
-  href: string;
-  label: string;
-  icon: React.ReactNode;
-}) {
-  return (
-    <a
-      href={href}
-      target="_blank"
-      rel="noopener noreferrer"
-      aria-label={label}
-      className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-border/70 bg-card text-foreground/70 hover:text-primary hover:border-primary/40 hover:bg-primary/5 transition-colors"
-    >
-      {icon}
-    </a>
-  );
-}
-
-function InstagramGlyph() {
-  return (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="1.75"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      className="h-4 w-4"
-      aria-hidden
-    >
-      <rect x="3" y="3" width="18" height="18" rx="5" />
-      <circle cx="12" cy="12" r="4" />
-      <circle cx="17.5" cy="6.5" r="0.75" fill="currentColor" stroke="none" />
-    </svg>
-  );
-}
-
-function FacebookGlyph() {
-  return (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      viewBox="0 0 24 24"
-      fill="currentColor"
-      className="h-4 w-4"
-      aria-hidden
-    >
-      <path d="M13.5 22v-8.25h2.79l.42-3.24H13.5V8.44c0-.94.26-1.58 1.6-1.58h1.71V3.96A22.87 22.87 0 0 0 14.31 3.8c-2.46 0-4.15 1.5-4.15 4.26v2.45H7.4v3.24h2.76V22h3.34z" />
-    </svg>
-  );
-}
-
-function Footer() {
-  return (
-    <footer className="border-t border-border/60 mt-16">
-      <div className="mx-auto max-w-6xl px-4 sm:px-6 py-10 flex flex-col gap-8 sm:flex-row sm:items-end sm:justify-between">
-        <div className="space-y-3">
-          <Link href="/" className="flex items-center gap-2">
-            <BrandMark />
-            <span className="font-heading text-lg text-foreground">
-              Marshall <span className="text-primary italic">Liquor</span>
-            </span>
-          </Link>
-          <p className="text-xs text-muted-foreground max-w-xs">
-            Please drink responsibly. Must be 21+ to purchase alcohol.
-          </p>
-          <div className="flex items-center gap-2 pt-1">
-            <SocialIconLink
-              href={INSTAGRAM_URL}
-              label="Instagram"
-              icon={<InstagramGlyph />}
-            />
-            <SocialIconLink
-              href={FACEBOOK_URL}
-              label="Facebook"
-              icon={<FacebookGlyph />}
-            />
-          </div>
-        </div>
-        <div className="flex flex-wrap gap-x-6 gap-y-2 text-xs text-muted-foreground">
-          <a href="#featured" className="hover:text-foreground">
-            Specials
-          </a>
-          <a href="#categories" className="hover:text-foreground">
-            Categories
-          </a>
-          <a
-            href={MAPS_URL}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="hover:text-foreground"
-          >
-            Visit
-          </a>
-          <Link href="/login" className="hover:text-foreground">
-            Staff sign in
-          </Link>
-        </div>
-      </div>
-      <div className="border-t border-border/60">
-        <p className="mx-auto max-w-6xl px-4 sm:px-6 py-4 text-xs text-muted-foreground">
-          © {new Date().getFullYear()} Marshall Liquor Store. All rights reserved.
-        </p>
-      </div>
-    </footer>
-  );
-}
