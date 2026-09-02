@@ -15,7 +15,7 @@ type Product = {
   sku: string;
   name: string;
   description: string | null;
-  category: string | null;
+  category_id: string | null;
   price: string;
   cost: string | null;
   stock: number;
@@ -32,14 +32,23 @@ export default async function ProductDetailPage({
   const profile = await getProfile();
   const isAdmin = profile?.role === "admin";
 
-  const { data, error } = await supabase
-    .from("products")
-    .select("id, sku, name, description, category, price, cost, stock, image_url")
-    .eq("id", id)
-    .single();
+  const [{ data, error }, { data: categoriesData }] = await Promise.all([
+    supabase
+      .from("products")
+      .select(
+        "id, sku, name, description, category_id, price, cost, stock, image_url",
+      )
+      .eq("id", id)
+      .single(),
+    supabase
+      .from("categories")
+      .select("id, name")
+      .order("name", { ascending: true }),
+  ]);
 
   if (error || !data) notFound();
   const product = data as Product;
+  const categories = (categoriesData ?? []) as { id: string; name: string }[];
 
   const boundUpdate = updateProduct.bind(null, product.id);
 
@@ -97,12 +106,23 @@ export default async function ProductDetailPage({
                   required
                 />
               </Field>
-              <Field label="Category" htmlFor="category">
-                <Input
-                  id="category"
-                  name="category"
-                  defaultValue={product.category ?? ""}
+              <Field label="Category" htmlFor="category_id">
+                <CategorySelect
+                  categories={categories}
+                  defaultValue={product.category_id}
                 />
+                {categories.length === 0 && isAdmin && (
+                  <p className="text-xs text-muted-foreground">
+                    No categories yet.{" "}
+                    <Link
+                      href="/categories/new"
+                      className="text-primary hover:underline"
+                    >
+                      Add one first
+                    </Link>{" "}
+                    to sort your bottles.
+                  </p>
+                )}
               </Field>
             </div>
             <Field label="Name" htmlFor="name" required>
@@ -241,6 +261,30 @@ function Field({
       </Label>
       {children}
     </div>
+  );
+}
+
+function CategorySelect({
+  categories,
+  defaultValue,
+}: {
+  categories: { id: string; name: string }[];
+  defaultValue?: string | null;
+}) {
+  return (
+    <select
+      id="category_id"
+      name="category_id"
+      defaultValue={defaultValue ?? ""}
+      className="flex h-9 w-full rounded-lg border border-input bg-background px-3 text-sm shadow-sm focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-ring/50 focus-visible:border-ring disabled:opacity-60 disabled:cursor-not-allowed"
+    >
+      <option value="">Uncategorized</option>
+      {categories.map((c) => (
+        <option key={c.id} value={c.id}>
+          {c.name}
+        </option>
+      ))}
+    </select>
   );
 }
 

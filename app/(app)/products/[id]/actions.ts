@@ -15,13 +15,18 @@ function parseNumber(value: FormDataEntryValue | null): number | null {
   return Number.isFinite(n) ? n : null;
 }
 
+function parseCategoryId(value: FormDataEntryValue | null): string | null {
+  const v = String(value ?? "").trim();
+  return v ? v : null;
+}
+
 export async function updateProduct(id: string, formData: FormData) {
   await requireAdmin();
 
   const sku = String(formData.get("sku") ?? "").trim();
   const name = String(formData.get("name") ?? "").trim();
   const description = String(formData.get("description") ?? "").trim() || null;
-  const category = String(formData.get("category") ?? "").trim() || null;
+  const category_id = parseCategoryId(formData.get("category_id"));
   const price = parseNumber(formData.get("price"));
   const cost = parseNumber(formData.get("cost"));
   const stock = parseNumber(formData.get("stock")) ?? 0;
@@ -59,7 +64,7 @@ export async function updateProduct(id: string, formData: FormData) {
       sku,
       name,
       description,
-      category,
+      category_id,
       price,
       cost,
       stock,

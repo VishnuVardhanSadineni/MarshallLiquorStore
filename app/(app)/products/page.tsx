@@ -16,7 +16,7 @@ type Product = {
   id: string;
   sku: string;
   name: string;
-  category: string | null;
+  category: { name: string } | null;
   price: number;
   stock: number;
   image_url: string | null;
@@ -34,7 +34,9 @@ export default async function ProductsPage({
 
   let query = supabase
     .from("products")
-    .select("id, sku, name, category, price, stock, image_url")
+    .select(
+      "id, sku, name, price, stock, image_url, category:categories(name)",
+    )
     .order("created_at", { ascending: false })
     .limit(500);
 
@@ -55,7 +57,7 @@ export default async function ProductsPage({
     );
   }
 
-  const rows = (products ?? []) as Product[];
+  const rows = (products ?? []) as unknown as Product[];
   const hasSearch = Boolean(q && q.trim());
 
   return (
@@ -135,10 +137,10 @@ export default async function ProductsPage({
                       </div>
                       <p className="mt-0.5 truncate text-xs text-muted-foreground">
                         <span className="font-mono">{p.sku}</span>
-                        {p.category && (
+                        {p.category?.name && (
                           <>
                             <span className="mx-1.5 opacity-50">·</span>
-                            {p.category}
+                            {p.category.name}
                           </>
                         )}
                       </p>
@@ -192,7 +194,7 @@ export default async function ProductsPage({
                   </TableCell>
                   <TableCell className="font-medium">{p.name}</TableCell>
                   <TableCell className="text-muted-foreground">
-                    {p.category ?? "—"}
+                    {p.category?.name ?? "—"}
                   </TableCell>
                   <TableCell className="text-right tabular-nums">
                     ${Number(p.price).toFixed(2)}

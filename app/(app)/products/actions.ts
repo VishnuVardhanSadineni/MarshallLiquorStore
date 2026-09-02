@@ -12,13 +12,18 @@ function parseNumber(value: FormDataEntryValue | null): number | null {
   return Number.isFinite(n) ? n : null;
 }
 
+function parseCategoryId(value: FormDataEntryValue | null): string | null {
+  const v = String(value ?? "").trim();
+  return v ? v : null;
+}
+
 export async function createProduct(formData: FormData) {
   await requireAdmin();
 
   const sku = String(formData.get("sku") ?? "").trim();
   const name = String(formData.get("name") ?? "").trim();
   const description = String(formData.get("description") ?? "").trim() || null;
-  const category = String(formData.get("category") ?? "").trim() || null;
+  const category_id = parseCategoryId(formData.get("category_id"));
   const price = parseNumber(formData.get("price"));
   const cost = parseNumber(formData.get("cost"));
   const stock = parseNumber(formData.get("stock")) ?? 0;
@@ -36,7 +41,16 @@ export async function createProduct(formData: FormData) {
 
   const { data, error } = await supabase
     .from("products")
-    .insert({ sku, name, description, category, price, cost, stock, image_url })
+    .insert({
+      sku,
+      name,
+      description,
+      category_id,
+      price,
+      cost,
+      stock,
+      image_url,
+    })
     .select("id")
     .single();
 

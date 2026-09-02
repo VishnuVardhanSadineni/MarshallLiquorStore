@@ -7,7 +7,7 @@ type Product = {
   id: string;
   name: string;
   sku: string;
-  category: string | null;
+  category: { name: string } | null;
   price: number;
   stock: number;
   image_url: string | null;
@@ -23,11 +23,13 @@ export default async function DashboardPage() {
 
   const { data, error } = await supabase
     .from("products")
-    .select("id, name, sku, category, price, stock, image_url, created_at")
+    .select(
+      "id, name, sku, price, stock, image_url, created_at, category:categories(name)",
+    )
     .order("created_at", { ascending: false })
     .limit(500);
 
-  const rows = ((data ?? []) as Product[]).map((p) => ({
+  const rows = ((data ?? []) as unknown as Product[]).map((p) => ({
     ...p,
     price: Number(p.price),
   }));
@@ -145,10 +147,10 @@ export default async function DashboardPage() {
                           </p>
                           <p className="truncate text-xs text-muted-foreground">
                             <span className="font-mono">{p.sku}</span>
-                            {p.category && (
+                            {p.category?.name && (
                               <>
                                 <span className="mx-1.5 opacity-50">·</span>
-                                {p.category}
+                                {p.category.name}
                               </>
                             )}
                           </p>

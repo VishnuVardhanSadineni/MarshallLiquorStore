@@ -1,0 +1,145 @@
+import Link from "next/link";
+import { requireAdmin } from "@/lib/auth";
+import { createClient } from "@/lib/supabase/server";
+import { buttonVariants } from "@/components/ui/button";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+
+type Row = {
+  id: string;
+  name: string;
+  bottle_count: number;
+};
+
+export default async function CategoriesPage() {
+  await requireAdmin();
+  const supabase = await createClient();
+
+  const { data: categories, error } = await supabase
+    .from("categories")
+    .select("id, name, products(count)")
+    .order("name", { ascending: true });
+
+  if (error) {
+    return (
+      <div className="rounded-lg border border-destructive/30 bg-destructive/10 px-4 py-3 text-sm text-destructive">
+        Couldn&apos;t load categories: {error.message}
+      </div>
+    );
+  }
+
+  const rows: Row[] = (categories ?? []).map((c) => ({
+    id: c.id as string,
+    name: c.name as string,
+    bottle_count:
+      Array.isArray(c.products) && c.products[0]?.count
+        ? Number(c.products[0].count)
+        : 0,
+  }));
+
+  return (
+    <div className="space-y-8">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+        <div className="space-y-2">
+          <span className="text-xs uppercase tracking-[0.24em] text-primary font-medium">
+            Aisles
+          </span>
+          <h1 className="font-heading text-3xl sm:text-5xl leading-none text-foreground">
+            Categories
+          </h1>
+          <p className="text-sm sm:text-base text-muted-foreground max-w-md">
+            Organize your bottles by aisle. Wine, whiskey, beer — whatever
+            makes sense on your shelves.
+          </p>
+        </div>
+        <Link
+          href="/categories/new"
+          className={
+            buttonVariants({ size: "lg" }) +
+            " w-full sm:w-auto justify-center shadow-sm"
+          }
+        >
+          <span className="mr-1.5 text-lg leading-none">+</span> Add category
+        </Link>
+      </div>
+
+      {rows.length === 0 ? (
+        <div className="rounded-3xl border border-border/70 bg-card/70 px-6 py-16 text-center shadow-sm">
+          <p className="font-heading text-2xl text-foreground">
+            No categories yet
+          </p>
+          <p className="mt-2 text-sm text-muted-foreground">
+            Add your first category to start organizing the shelves.
+          </p>
+        </div>
+      ) : (
+        <>
+          <ul className="space-y-3 sm:hidden">
+            {rows.map((r) => (
+              <li key={r.id}>
+                <Link
+                  href={`/categories/${r.id}`}
+                  className="flex items-center justify-between rounded-2xl border border-border/70 bg-card p-4 shadow-sm active:bg-accent/60 transition-colors"
+                >
+                  <div>
+                    <p className="font-medium text-foreground">{r.name}</p>
+                    <p className="text-xs text-muted-foreground">
+                      {r.bottle_count} bottle{r.bottle_count === 1 ? "" : "s"}
+                    </p>
+                  </div>
+                  <span className="text-primary text-sm">Edit →</span>
+                </Link>
+              </li>
+            ))}
+          </ul>
+
+          <div className="hidden sm:block overflow-hidden rounded-2xl border border-border/70 bg-card shadow-sm">
+            <Table>
+              <TableHeader>
+                <TableRow className="border-border/50 hover:bg-transparent">
+                  <TableHead className="text-xs uppercase tracking-wider text-muted-foreground font-medium">
+                    Name
+                  </TableHead>
+                  <TableHead className="text-xs uppercase tracking-wider text-muted-foreground font-medium text-right">
+                    Bottles
+                  </TableHead>
+                  <TableHead className="w-24" />
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {rows.map((r) => (
+                  <TableRow
+                    key={r.id}
+                    className="border-border/50 transition-colors hover:bg-accent/40"
+                  >
+                    <TableCell className="font-medium">{r.name}</TableCell>
+                    <TableCell className="text-right tabular-nums text-muted-foreground">
+                      {r.bottle_count}
+                    </TableCell>
+                    <TableCell className="text-right">
+                      <Link
+                        href={`/categories/${r.id}`}
+                        className={buttonVariants({
+                          variant: "ghost",
+                          size: "sm",
+                        })}
+                      >
+                        Edit →
+                      </Link>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </div>
+        </>
+      )}
+    </div>
+  );
+}

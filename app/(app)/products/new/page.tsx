@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { requireAdmin } from "@/lib/auth";
+import { createClient } from "@/lib/supabase/server";
 import { createProduct } from "../actions";
 import { PhotoPicker } from "../photo-picker";
 import { Button, buttonVariants } from "@/components/ui/button";
@@ -9,6 +10,12 @@ import { Label } from "@/components/ui/label";
 
 export default async function NewProductPage() {
   await requireAdmin();
+  const supabase = await createClient();
+  const { data: categoriesData } = await supabase
+    .from("categories")
+    .select("id, name")
+    .order("name", { ascending: true });
+  const categories = (categoriesData ?? []) as { id: string; name: string }[];
 
   return (
     <div className="mx-auto max-w-3xl space-y-8">
@@ -55,12 +62,20 @@ export default async function NewProductPage() {
                 required
               />
             </Field>
-            <Field label="Category" htmlFor="category">
-              <Input
-                id="category"
-                name="category"
-                placeholder="Wine, Beer, Whiskey, Mixers..."
-              />
+            <Field label="Category" htmlFor="category_id">
+              <CategorySelect categories={categories} />
+              {categories.length === 0 && (
+                <p className="text-xs text-muted-foreground">
+                  No categories yet.{" "}
+                  <Link
+                    href="/categories/new"
+                    className="text-primary hover:underline"
+                  >
+                    Add one first
+                  </Link>{" "}
+                  to sort your bottles.
+                </p>
+              )}
             </Field>
           </div>
           <Field label="Name" htmlFor="name" required>
@@ -175,6 +190,30 @@ function Field({
       </Label>
       {children}
     </div>
+  );
+}
+
+function CategorySelect({
+  categories,
+  defaultValue,
+}: {
+  categories: { id: string; name: string }[];
+  defaultValue?: string | null;
+}) {
+  return (
+    <select
+      id="category_id"
+      name="category_id"
+      defaultValue={defaultValue ?? ""}
+      className="flex h-9 w-full rounded-lg border border-input bg-background px-3 text-sm shadow-sm focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-ring/50 focus-visible:border-ring"
+    >
+      <option value="">Uncategorized</option>
+      {categories.map((c) => (
+        <option key={c.id} value={c.id}>
+          {c.name}
+        </option>
+      ))}
+    </select>
   );
 }
 

@@ -22,6 +22,11 @@ export function HeaderNav({ isAdmin }: { isAdmin: boolean }) {
   ];
   if (isAdmin) {
     items.push({
+      href: "/categories",
+      label: "Categories",
+      matcher: (p) => p === "/categories" || p.startsWith("/categories/"),
+    });
+    items.push({
       href: "/team",
       label: "Team",
       matcher: (p) => p === "/team" || p.startsWith("/team/"),

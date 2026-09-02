@@ -5,7 +5,7 @@ import { createAdminClient } from "@/lib/supabase/admin";
 type FeaturedProduct = {
   id: string;
   name: string;
-  category: string | null;
+  category: { name: string } | null;
   price: number;
   image_url: string | null;
 };
@@ -43,10 +43,10 @@ async function getFeaturedBottles(): Promise<FeaturedProduct[]> {
     const admin = createAdminClient();
     const { data } = await admin
       .from("products")
-      .select("id, name, category, price, image_url")
+      .select("id, name, price, image_url, category:categories(name)")
       .order("created_at", { ascending: false })
       .limit(8);
-    const rows = (data ?? []) as FeaturedProduct[];
+    const rows = (data ?? []) as unknown as FeaturedProduct[];
     // prefer bottles that actually have a photo
     const withPhoto = rows.filter((r) => r.image_url).slice(0, 4);
     if (withPhoto.length >= 4) return withPhoto;
@@ -251,10 +251,10 @@ function Featured({ products }: { products: FeaturedProduct[] }) {
 }
 
 const PLACEHOLDER_FEATURED: FeaturedProduct[] = [
-  { id: "p1", name: "Old-Vine Zinfandel", category: "Wine", price: 24.0, image_url: null },
-  { id: "p2", name: "Small-Batch Bourbon", category: "Whiskey", price: 48.0, image_url: null },
-  { id: "p3", name: "Neighborhood IPA (6-pack)", category: "Beer", price: 14.0, image_url: null },
-  { id: "p4", name: "Blanco Tequila", category: "Tequila", price: 32.0, image_url: null },
+  { id: "p1", name: "Old-Vine Zinfandel", category: { name: "Wine" }, price: 24.0, image_url: null },
+  { id: "p2", name: "Small-Batch Bourbon", category: { name: "Whiskey" }, price: 48.0, image_url: null },
+  { id: "p3", name: "Neighborhood IPA (6-pack)", category: { name: "Beer" }, price: 14.0, image_url: null },
+  { id: "p4", name: "Blanco Tequila", category: { name: "Tequila" }, price: 32.0, image_url: null },
 ];
 
 function FeaturedCard({ product }: { product: FeaturedProduct }) {
@@ -270,12 +270,12 @@ function FeaturedCard({ product }: { product: FeaturedProduct }) {
             className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.04]"
           />
         ) : (
-          <PlaceholderBottle label={product.category ?? "Bottle"} />
+          <PlaceholderBottle label={product.category?.name ?? "Bottle"} />
         )}
       </div>
       <div className="p-4 space-y-1">
         <p className="text-[10px] uppercase tracking-[0.24em] text-muted-foreground">
-          {product.category ?? "Selection"}
+          {product.category?.name ?? "Selection"}
         </p>
         <p className="font-medium text-foreground line-clamp-2">
           {product.name}
