@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
-import { getProfile } from "@/lib/auth";
 import { Button, buttonVariants } from "@/components/ui/button";
+import { StockInlineEditor } from "./stock-editor";
 import { Input } from "@/components/ui/input";
 import {
   Table,
@@ -31,8 +31,6 @@ export default async function ProductsPage({
 }) {
   const { q, category } = await searchParams;
   const supabase = await createClient();
-  const profile = await getProfile();
-  const isAdmin = profile?.role === "admin";
 
   let query = supabase
     .from("products")
@@ -91,22 +89,18 @@ export default async function ProductsPage({
             Products
           </h1>
           <p className="text-sm sm:text-base text-muted-foreground max-w-md">
-            {isAdmin
-              ? "Add bottles, adjust prices, and keep the shelf count honest."
-              : "Browse the current shelf. Ask an admin if something needs to change."}
+            Add bottles, adjust prices, and keep the shelf count honest.
           </p>
         </div>
-        {isAdmin && (
-          <Link
-            href="/products/new"
-            className={
-              buttonVariants({ size: "lg" }) +
-              " w-full sm:w-auto justify-center shadow-sm"
-            }
-          >
-            <span className="mr-1.5 text-lg leading-none">+</span> Add bottle
-          </Link>
-        )}
+        <Link
+          href="/products/new"
+          className={
+            buttonVariants({ size: "lg" }) +
+            " w-full sm:w-auto justify-center shadow-sm"
+          }
+        >
+          <span className="mr-1.5 text-lg leading-none">+</span> Add bottle
+        </Link>
       </div>
 
       <form
@@ -161,7 +155,6 @@ export default async function ProductsPage({
 
       {rows.length === 0 ? (
         <EmptyState
-          isAdmin={isAdmin}
           hasSearch={hasSearch}
           hasCategoryFilter={hasCategoryFilter}
           categoryName={selectedCategoryName}
@@ -172,11 +165,11 @@ export default async function ProductsPage({
           <ul className="space-y-3 sm:hidden">
             {rows.map((p) => (
               <li key={p.id}>
-                <Link
-                  href={`/products/${p.id}`}
-                  className="block rounded-2xl border border-border/70 bg-card p-4 shadow-sm transition-colors active:bg-accent/60"
-                >
-                  <div className="flex gap-3">
+                <div className="rounded-2xl border border-border/70 bg-card p-4 shadow-sm">
+                  <Link
+                    href={`/products/${p.id}`}
+                    className="flex gap-3 active:opacity-90"
+                  >
                     <Thumbnail url={p.image_url} size={64} />
                     <div className="min-w-0 flex-1">
                       <div className="flex items-start justify-between gap-3">
@@ -204,15 +197,21 @@ export default async function ProductsPage({
                           />
                         </div>
                       )}
-                      <div className="mt-2.5 flex items-center justify-between">
-                        <StockPill value={p.stock} />
-                        <span className="text-sm text-primary">
-                          {isAdmin ? "Edit" : "View"} →
-                        </span>
-                      </div>
                     </div>
+                  </Link>
+                  <div className="mt-3 flex items-center justify-between border-t border-border/50 pt-3">
+                    <StockInlineEditor
+                      productId={p.id}
+                      initialStock={p.stock}
+                    />
+                    <Link
+                      href={`/products/${p.id}`}
+                      className="text-sm text-primary"
+                    >
+                      Edit →
+                    </Link>
                   </div>
-                </Link>
+                </div>
               </li>
             ))}
           </ul>
@@ -268,7 +267,12 @@ export default async function ProductsPage({
                     ${Number(p.price).toFixed(2)}
                   </TableCell>
                   <TableCell className="text-right tabular-nums">
-                    <StockPill value={p.stock} />
+                    <div className="flex justify-end">
+                      <StockInlineEditor
+                        productId={p.id}
+                        initialStock={p.stock}
+                      />
+                    </div>
                   </TableCell>
                   <TableCell className="text-right">
                     <Link
@@ -278,7 +282,7 @@ export default async function ProductsPage({
                         size: "sm",
                       })}
                     >
-                      {isAdmin ? "Edit" : "View"} →
+                      Edit →
                     </Link>
                   </TableCell>
                 </TableRow>
@@ -367,36 +371,12 @@ function StatusPills({
   );
 }
 
-function StockPill({ value }: { value: number }) {
-  const style =
-    value === 0
-      ? "border-destructive/25 bg-destructive/10 text-destructive"
-      : value < 10
-      ? "border-amber-400/40 bg-amber-100/60 text-amber-800"
-      : "border-border bg-muted text-foreground/70";
-  return (
-    <span
-      className={
-        "inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-xs " +
-        style
-      }
-    >
-      {value}
-      <span className="text-[10px] uppercase tracking-wider opacity-70">
-        in stock
-      </span>
-    </span>
-  );
-}
-
 function EmptyState({
-  isAdmin,
   hasSearch,
   hasCategoryFilter,
   categoryName,
   query,
 }: {
-  isAdmin: boolean;
   hasSearch: boolean;
   hasCategoryFilter: boolean;
   categoryName: string | null;
@@ -430,20 +410,16 @@ function EmptyState({
           ? "Nothing matched your search"
           : hasCategoryFilter
           ? `No bottles in ${categoryName}`
-          : isAdmin
-          ? "Your shelves are empty"
-          : "The catalog is empty"}
+          : "Your shelves are empty"}
       </h2>
       <p className="relative mt-2 text-sm text-muted-foreground">
         {hasSearch
           ? `We couldn't find anything for "${query}". Try a different name or SKU.`
           : hasCategoryFilter
           ? "Clear the filter to see everything, or add a bottle to this aisle."
-          : isAdmin
-          ? "Add your first bottle to start tracking your inventory."
-          : "Check back once your admin stocks the shelves."}
+          : "Add your first bottle to start tracking your inventory."}
       </p>
-      {isAdmin && !hasSearch && !hasCategoryFilter && (
+      {!hasSearch && !hasCategoryFilter && (
         <Link
           href="/products/new"
           className={

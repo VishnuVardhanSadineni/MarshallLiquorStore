@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { requireAdmin } from "@/lib/auth";
+import { requireUser } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
 import { createProduct } from "../actions";
 import { PhotoPicker } from "../../photo-picker";
@@ -10,7 +10,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 
 export default async function NewProductPage() {
-  await requireAdmin();
+  await requireUser();
   const supabase = await createClient();
   const { data: categoriesData } = await supabase
     .from("categories")

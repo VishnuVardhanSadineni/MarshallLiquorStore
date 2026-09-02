@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
-import { getProfile } from "@/lib/auth";
+import { requireUser } from "@/lib/auth";
 import { updateProduct } from "./actions";
 import { DeleteButton } from "./delete-button";
 import { PhotoPicker } from "../../photo-picker";
@@ -32,8 +32,7 @@ export default async function ProductDetailPage({
 }) {
   const { id } = await params;
   const supabase = await createClient();
-  const profile = await getProfile();
-  const isAdmin = profile?.role === "admin";
+  await requireUser();
 
   const [{ data, error }, { data: categoriesData }] = await Promise.all([
     supabase
@@ -72,19 +71,17 @@ export default async function ProductDetailPage({
               </span>
             </span>
             <h1 className="font-heading text-3xl sm:text-4xl leading-none text-foreground">
-              {isAdmin ? "Edit bottle" : product.name}
+              Edit bottle
             </h1>
             <p className="text-sm text-muted-foreground">
-              {isAdmin
-                ? `Update the shelf details for ${product.name}.`
-                : "Read-only view. Ask an admin if the details need changing."}
+              Update the shelf details for {product.name}.
             </p>
           </div>
         </div>
       </div>
 
       <form action={boundUpdate} className="space-y-6" encType="multipart/form-data">
-        <fieldset disabled={!isAdmin} className="space-y-6 group">
+        <fieldset className="space-y-6 group">
           <FormSection
             title="Visibility"
             description="Control where this bottle appears."
@@ -105,13 +102,9 @@ export default async function ProductDetailPage({
 
           <FormSection
             title="Photo"
-            description={
-              isAdmin
-                ? "A shot of the label helps staff spot the bottle in a hurry."
-                : "Label photo."
-            }
+            description="A shot of the label helps staff spot the bottle in a hurry."
           >
-            <PhotoPicker currentUrl={product.image_url} disabled={!isAdmin} />
+            <PhotoPicker currentUrl={product.image_url} />
           </FormSection>
 
           <FormSection
@@ -132,7 +125,7 @@ export default async function ProductDetailPage({
                   categories={categories}
                   defaultValue={product.category_id}
                 />
-                {categories.length === 0 && isAdmin && (
+                {categories.length === 0 && (
                   <p className="text-xs text-muted-foreground">
                     No categories yet.{" "}
                     <Link
@@ -206,34 +199,23 @@ export default async function ProductDetailPage({
           </FormSection>
         </fieldset>
 
-        {isAdmin ? (
-          <div className="flex flex-col gap-3 border-t border-border/60 pt-6 sm:flex-row sm:flex-wrap sm:items-center sm:justify-between">
-            <DeleteButton id={product.id} name={product.name} />
-            <div className="flex flex-col-reverse gap-3 sm:flex-row">
-              <Link
-                href="/products"
-                className={
-                  buttonVariants({ variant: "ghost" }) +
-                  " w-full justify-center sm:w-auto"
-                }
-              >
-                Cancel
-              </Link>
-              <Button type="submit" size="lg" className="w-full sm:w-auto">
-                Save changes
-              </Button>
-            </div>
-          </div>
-        ) : (
-          <div className="flex items-center justify-end gap-3 border-t border-border/60 pt-6">
+        <div className="flex flex-col gap-3 border-t border-border/60 pt-6 sm:flex-row sm:flex-wrap sm:items-center sm:justify-between">
+          <DeleteButton id={product.id} name={product.name} />
+          <div className="flex flex-col-reverse gap-3 sm:flex-row">
             <Link
               href="/products"
-              className={buttonVariants({ variant: "ghost" })}
+              className={
+                buttonVariants({ variant: "ghost" }) +
+                " w-full justify-center sm:w-auto"
+              }
             >
-              Back
+              Cancel
             </Link>
+            <Button type="submit" size="lg" className="w-full sm:w-auto">
+              Save changes
+            </Button>
           </div>
-        )}
+        </div>
       </form>
     </div>
   );

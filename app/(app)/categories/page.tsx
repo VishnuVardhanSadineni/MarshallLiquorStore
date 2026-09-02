@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { requireAdmin } from "@/lib/auth";
+import { requireUser } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
 import { buttonVariants } from "@/components/ui/button";
 import {
@@ -19,7 +19,7 @@ type Row = {
 };
 
 export default async function CategoriesPage() {
-  await requireAdmin();
+  await requireUser();
   const supabase = await createClient();
 
   const { data: categories, error } = await supabase
