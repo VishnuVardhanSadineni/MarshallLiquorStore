@@ -10,6 +10,11 @@ export function HeaderNav({ isAdmin }: { isAdmin: boolean }) {
 
   const items: Item[] = [
     {
+      href: "/dashboard",
+      label: "Dashboard",
+      matcher: (p) => p === "/dashboard" || p.startsWith("/dashboard/"),
+    },
+    {
       href: "/products",
       label: "Products",
       matcher: (p) => p === "/products" || p.startsWith("/products/"),

@@ -151,8 +151,8 @@ function RoleSelect({ defaultValue }: { defaultValue: "admin" | "staff" }) {
       defaultValue={defaultValue}
       className="flex h-9 w-full rounded-lg border border-input bg-background px-3 text-sm shadow-sm focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-ring/50 focus-visible:border-ring"
     >
-      <option value="staff">Staff — read-only access to products</option>
-      <option value="admin">Admin — full access, can manage team</option>
+      <option value="staff">Bartender — read-only access to bottles</option>
+      <option value="admin">Manager — full access, can manage team</option>
     </select>
   );
 }

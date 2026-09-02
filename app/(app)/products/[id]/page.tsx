@@ -60,12 +60,12 @@ export default async function ProductDetailPage({
               </span>
             </span>
             <h1 className="font-heading text-3xl sm:text-4xl leading-none text-foreground">
-              {isAdmin ? "Edit product" : product.name}
+              {isAdmin ? "Edit bottle" : product.name}
             </h1>
             <p className="text-sm text-muted-foreground">
               {isAdmin
-                ? `Update the details for ${product.name}.`
-                : "Read-only view. Ask an admin if changes are needed."}
+                ? `Update the shelf details for ${product.name}.`
+                : "Read-only view. Ask an admin if the details need changing."}
             </p>
           </div>
         </div>
@@ -77,8 +77,8 @@ export default async function ProductDetailPage({
             title="Photo"
             description={
               isAdmin
-                ? "A picture helps staff recognize the product at a glance."
-                : "Product photo."
+                ? "A shot of the label helps staff spot the bottle in a hurry."
+                : "Label photo."
             }
           >
             <PhotoPicker currentUrl={product.image_url} disabled={!isAdmin} />
@@ -86,7 +86,7 @@ export default async function ProductDetailPage({
 
           <FormSection
             title="Basics"
-            description="The identifying details customers and staff will recognize."
+            description="What's on the shelf — name, category, and SKU."
           >
             <div className="grid gap-5 sm:grid-cols-2">
               <Field label="SKU" htmlFor="sku" required>
@@ -113,7 +113,7 @@ export default async function ProductDetailPage({
                 required
               />
             </Field>
-            <Field label="Description" htmlFor="description">
+            <Field label="Tasting notes" htmlFor="description">
               <Textarea
                 id="description"
                 name="description"
@@ -148,9 +148,9 @@ export default async function ProductDetailPage({
 
           <FormSection
             title="Stock"
-            description="How many units are on hand right now."
+            description="How many bottles are on the shelf right now."
           >
-            <Field label="Quantity" htmlFor="stock" required>
+            <Field label="Bottles on hand" htmlFor="stock" required>
               <Input
                 id="stock"
                 name="stock"

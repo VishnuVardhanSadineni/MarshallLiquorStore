@@ -23,5 +23,5 @@ export async function login(
     return { error: error.message };
   }
 
-  redirect("/products");
+  redirect("/dashboard");
 }

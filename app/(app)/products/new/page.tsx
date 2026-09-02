@@ -22,13 +22,13 @@ export default async function NewProductPage() {
         <div className="flex flex-wrap items-end justify-between gap-4">
           <div className="space-y-2">
             <span className="text-xs uppercase tracking-[0.24em] text-primary font-medium">
-              New item
+              New bottle
             </span>
             <h1 className="font-heading text-3xl sm:text-4xl leading-none text-foreground">
-              Add a product
+              Add a bottle
             </h1>
             <p className="text-sm text-muted-foreground">
-              Fill in the details below. You can always edit them later.
+              Enter what&apos;s on the label. You can always edit later.
             </p>
           </div>
         </div>
@@ -37,14 +37,14 @@ export default async function NewProductPage() {
       <form action={createProduct} className="space-y-6" encType="multipart/form-data">
         <FormSection
           title="Photo"
-          description="A picture helps staff recognize the product at a glance."
+          description="A shot of the label helps staff spot the bottle in a hurry."
         >
           <PhotoPicker />
         </FormSection>
 
         <FormSection
           title="Basics"
-          description="The identifying details customers and staff will recognize."
+          description="What's on the shelf — name, category, and SKU."
         >
           <div className="grid gap-5 sm:grid-cols-2">
             <Field label="SKU" htmlFor="sku" required>
@@ -59,19 +59,24 @@ export default async function NewProductPage() {
               <Input
                 id="category"
                 name="category"
-                placeholder="e.g. Apparel, Grocery, Hardware"
+                placeholder="Wine, Beer, Whiskey, Mixers..."
               />
             </Field>
           </div>
           <Field label="Name" htmlFor="name" required>
-            <Input id="name" name="name" placeholder="Product name" required />
+            <Input
+              id="name"
+              name="name"
+              placeholder="e.g. Buffalo Trace Bourbon 750ml"
+              required
+            />
           </Field>
-          <Field label="Description" htmlFor="description">
+          <Field label="Tasting notes" htmlFor="description">
             <Textarea
               id="description"
               name="description"
               rows={3}
-              placeholder="A short description your team will see when browsing."
+              placeholder="Region, vintage, ABV, food pairing — whatever your staff should know."
             />
           </Field>
         </FormSection>
@@ -92,9 +97,9 @@ export default async function NewProductPage() {
 
         <FormSection
           title="Stock"
-          description="How many units are on hand right now."
+          description="How many bottles are on the shelf right now."
         >
-          <Field label="Quantity" htmlFor="stock" required>
+          <Field label="Bottles on hand" htmlFor="stock" required>
             <Input
               id="stock"
               name="stock"
@@ -119,7 +124,7 @@ export default async function NewProductPage() {
             Cancel
           </Link>
           <Button type="submit" size="lg" className="w-full sm:w-auto">
-            Create product
+            Add bottle
           </Button>
         </div>
       </form>

@@ -71,7 +71,7 @@ export default async function TeamPage() {
             Team
           </h1>
           <p className="text-sm sm:text-base text-muted-foreground max-w-md">
-            Invite staff, promote managers to admin, and keep passwords fresh.
+            Invite bartenders, promote managers to admin, and keep passwords fresh.
           </p>
         </div>
         <Link
@@ -91,7 +91,7 @@ export default async function TeamPage() {
             No teammates yet
           </p>
           <p className="mt-2 text-sm text-muted-foreground">
-            Add your first staff member or fellow admin above.
+            Add your first bartender or fellow manager above.
           </p>
         </div>
       ) : (

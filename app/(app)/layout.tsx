@@ -21,7 +21,7 @@ export default async function AppLayout({
         <div className="mx-auto max-w-6xl px-4 sm:px-6 h-14 sm:h-16 flex items-center justify-between gap-3">
           <div className="flex items-center gap-3 sm:gap-6 min-w-0">
             <Link
-              href="/products"
+              href="/dashboard"
               className="group flex items-center gap-2 shrink-0"
               aria-label="Inventory home"
             >

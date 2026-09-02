@@ -23,7 +23,7 @@ export default function LoginPage() {
             Welcome back
           </h1>
           <p className="mt-2 text-sm text-muted-foreground">
-            Sign in to manage your store&apos;s catalog.
+            Sign in to check the shelves and stock up.
           </p>
         </div>
 

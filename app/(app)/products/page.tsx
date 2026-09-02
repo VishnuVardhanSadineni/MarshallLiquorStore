@@ -70,8 +70,8 @@ export default async function ProductsPage({
           </h1>
           <p className="text-sm sm:text-base text-muted-foreground max-w-md">
             {isAdmin
-              ? "Add, edit, and keep your store's inventory up to date."
-              : "Browse your store's current inventory."}
+              ? "Add bottles, adjust prices, and keep the shelf count honest."
+              : "Browse the current shelf. Ask an admin if something needs to change."}
           </p>
         </div>
         {isAdmin && (
@@ -82,7 +82,7 @@ export default async function ProductsPage({
               " w-full sm:w-auto justify-center shadow-sm"
             }
           >
-            <span className="mr-1.5 text-lg leading-none">+</span> Add product
+            <span className="mr-1.5 text-lg leading-none">+</span> Add bottle
           </Link>
         )}
       </div>
@@ -323,15 +323,15 @@ function EmptyState({
         {hasSearch
           ? "Nothing matched your search"
           : isAdmin
-          ? "Your catalog is empty"
-          : "No products yet"}
+          ? "Your shelves are empty"
+          : "The catalog is empty"}
       </h2>
       <p className="relative mt-2 text-sm text-muted-foreground">
         {hasSearch
           ? `We couldn't find anything for "${query}". Try a different name or SKU.`
           : isAdmin
-          ? "Add your first product to start tracking inventory."
-          : "Check back after your admin adds inventory."}
+          ? "Add your first bottle to start tracking your inventory."
+          : "Check back once your admin stocks the shelves."}
       </p>
       {isAdmin && !hasSearch && (
         <Link
@@ -340,7 +340,7 @@ function EmptyState({
             buttonVariants({ size: "lg" }) + " relative mt-6 shadow-sm"
           }
         >
-          <span className="mr-1.5 text-lg leading-none">+</span> Add your first product
+          <span className="mr-1.5 text-lg leading-none">+</span> Add your first bottle
         </Link>
       )}
     </div>
